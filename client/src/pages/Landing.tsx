@@ -12,8 +12,8 @@ const Landing = () => {
         />}</div>
       </div>
     </div>
-    <div className="w-1/2 bg-green-400">
-      right
+    <div className="w-1/2 bg-green-400 text-center text-xl">
+      Moi ruurik!
     </div>
     </div>
   );

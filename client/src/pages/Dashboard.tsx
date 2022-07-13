@@ -7,14 +7,19 @@ import TodoList, { Todo } from "../components/todo/TodoList";
 const Dashboard = () => {
   const localToken = localStorage.getItem("token");
   const [todoList, setTodoList] = React.useState<Todo[]>([]);
+  /*const [userName, setUserName] = React.useState<string>("");
 
   React.useEffect(() => {
     if (localToken) {
       axios
         .get("/user", { headers: { token: localToken } })
-        .then((res) => console.log(res));
+        .then((res) => {console.log(res);
+          setUserName(res.data.userName);
+        
+        });
+       
     }
-  }, [localToken]);
+  }, [localToken]);*/
 
   React.useEffect(() => {
     if (localToken) {

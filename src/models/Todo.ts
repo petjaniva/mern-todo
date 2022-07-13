@@ -5,7 +5,7 @@ import User from "./User";
 export interface ITodo {
     title: string;
     isCompleted: boolean;
-    author: Types.ObjectId,
+    author?: Types.ObjectId,
 }
 
 const todoSchema = new Schema<ITodo>({
