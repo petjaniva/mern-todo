@@ -1,6 +1,6 @@
-import User from "./models/User";
+import User, { IUser } from "./models/User";
 import { Request, Response } from "express";
-import Todo, {ITodo} from "./models/Todo";
+import Todo, { ITodo } from "./models/Todo";
 import express from "express";
 import cors from "cors";
 import jwt from "jsonwebtoken";
@@ -10,11 +10,12 @@ import * as dotenv from "dotenv";
 import * as path from "path";
 
 const app = express();
-dotenv.config({path: path.resolve(__dirname, '../.env')});
+dotenv.config({ path: path.resolve(__dirname, "../.env") });
 
-const MONGODB_URI = process.env.NODE_ENV === 'test' 
-  ? process.env.TEST_MONGODB_URI!
-  : process.env.MONGODB_URI!
+const MONGODB_URI =
+  process.env.NODE_ENV === "test"
+    ? process.env.TEST_MONGODB_URI!
+    : process.env.MONGODB_URI!;
 
 mongoose.connect(MONGODB_URI);
 
@@ -64,6 +65,8 @@ app.post("/login", (req: Request, res: Response) => {
     return res.status(200).json({
       title: "login succesful",
       token: token,
+      userId: user._id,
+      todos: user.todos
     });
   });
 });
@@ -103,11 +106,11 @@ app.get("/todo", (req: Request, res: Response) => {
       return res.status(401).json({
         title: "not authorized",
       });
-    Todo.find({}, (err: Error, todos: ITodo[]) => {
+    Todo.find({author: decoded.userId}, (err: Error, todos: ITodo[]) => {
       if (err) return console.log(err);
       return res.status(200).json({
         title: "success",
-        todos: todos
+        todos: todos,
       });
     });
   });
@@ -119,8 +122,9 @@ app.post("/todo", (req: Request, res: Response) => {
     return res.status(401).json({
       title: "not authorized",
     });
-}
-  jwt.verify(token, "secretkey", (err: Error | null, decoded: any) => {
+  }
+  jwt.verify(token, "secretkey", async (err: Error | null, decoded: any) => {
+    console.log(JSON.stringify(decoded));
     if (err)
       return res.status(401).json({
         title: "not authorized",
@@ -128,15 +132,19 @@ app.post("/todo", (req: Request, res: Response) => {
     let newTodo = new Todo({
       title: req.body.title,
       isCompleted: false,
-      author: decoded.userID,
+      author: decoded.userId,
     });
-
-    newTodo.save((saveErr) => {
-      if (saveErr) return console.log(saveErr);
-      return res.status(200).json({
-        title: "successfully added",
-        todo: newTodo,
+    const savedTodo: ITodo = await newTodo.save()
+    const user: IUser | null = await User.findById(decoded.userId);
+    if (!user) {
+      return res.status(404).json({
+        title: "user not found",
       });
+    }
+    user.todos.concat(savedTodo._id!);
+    return res.status(200).json({
+      title: "successfully added",
+      todo: newTodo,
     });
   });
 });

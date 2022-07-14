@@ -2,10 +2,11 @@ import { Document, Schema, model, Types } from "mongoose";
 import User from "./User";
 
 
-export interface ITodo {
+export interface ITodo{
     title: string;
     isCompleted: boolean;
-    author?: Types.ObjectId,
+    author: Types.ObjectId,
+    _id?: Types.ObjectId
 }
 
 const todoSchema = new Schema<ITodo>({

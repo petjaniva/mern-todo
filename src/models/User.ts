@@ -1,9 +1,12 @@
-import { Document, Schema, model } from "mongoose";
+import { Document, Schema, model, Types } from "mongoose";
+
+
 
 
 export interface IUser {
     email: string;
     password: string;
+    todos: Types.ObjectId[];
 }
 
 const userSchema = new Schema<IUser>({
@@ -11,7 +14,9 @@ const userSchema = new Schema<IUser>({
         unique: true,
         type: String
     },
-    password: String
+    password: String,
+    todos: [{type: Schema.Types.ObjectId,
+            ref: 'Todo'}]
 });
 
 const User = model<IUser>('User', userSchema);

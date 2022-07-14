@@ -26,6 +26,7 @@ const Login = ({renderSignup}: LoginProps) => {
                 const token = res.data.token;
                 localStorage.setItem('token', token);
                 window.location.href = '/dashboard';
+                //todo: setTodos(res.data.todos);
             }
             else {
 
