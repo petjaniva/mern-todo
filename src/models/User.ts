@@ -9,10 +9,19 @@ export interface IUser {
     todos: Types.ObjectId[];
 }
 
+var validateEmail = function(email: string) {
+    var re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    return re.test(email)
+};
+
 const userSchema = new Schema<IUser>({
     email: {
         unique: true,
-        type: String
+        type: String,
+        trim: true,
+        lowercase: true,
+        validate: [validateEmail, 'Please fill a valid email address'],
+        match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please fill a valid email address']
     },
     password: String,
     todos: [{type: Schema.Types.ObjectId,

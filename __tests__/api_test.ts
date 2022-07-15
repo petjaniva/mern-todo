@@ -7,7 +7,7 @@ import {Schema, model, Types } from "mongoose";
 let userId: Types.ObjectId;
 let token: object;
 const newUser: IUser = {
-  email: "tester",
+  email: "tester@gmail.com",
   password: "passu",
   todos: []
 };
@@ -50,7 +50,7 @@ describe("user-tests", () => {
     it("logging in with bad password", async () => {
       await request(app)
         .post("/login")
-        .send({email: 'tester',
+        .send({email: 'tester@gmail.com',
               password: 'promppu'})
         .expect(401);
     });

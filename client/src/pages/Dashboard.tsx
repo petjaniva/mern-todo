@@ -23,7 +23,7 @@ const Dashboard = () => {
 
   React.useEffect(() => {
     if (localToken) {
-      axios.get("/todos", { headers: { token: localToken } }).then((res) => {
+      axios.get("/todo", { headers: { token: localToken } }).then((res) => {
         if (res.status === 200) {
           setTodoList(res.data.todos);
         }
