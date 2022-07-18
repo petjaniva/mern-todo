@@ -1,6 +1,7 @@
 import User, { IUser } from "./models/User";
 import { Request, Response } from "express";
 import Todo, { ITodo } from "./models/Todo";
+import Org, { IOrg } from "./models/Org";
 import express from "express";
 import cors from "cors";
 import jwt from "jsonwebtoken";
@@ -24,9 +25,16 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 app.post("/signup", (req: Request, res: Response) => {
+  let userOrg: IOrg | null = null;
+  if (req.body.orgCode) {
+    Org.findOne({ code: req.body.orgCode }, (err: Error, foundOrg: IOrg) => {
+      userOrg = foundOrg;
+    });
+  }
   const newUser = new User({
     email: req.body.email,
     password: bcrypt.hashSync(req.body.password, 10),
+    org: userOrg,
   });
   newUser.save((err) => {
     if (err) {
@@ -37,13 +45,35 @@ app.post("/signup", (req: Request, res: Response) => {
     }
     return res.status(200).json({
       title: "user succesfully added",
+      user: newUser,
+    });
+  });
+  if (userOrg){
+    //TODO: add user to the org
+  }
+});
+
+app.post("/org", (req: Request, res: Response) => {
+  const newOrg = new Org({
+    name: req.body.name,
+    code: req.body.code,
+    members: [],
+  });
+  newOrg.save((err) => {
+    if (err) {
+      return res.status(400).json({
+        title: "error",
+        error: err,
+      });
+    }
+    return res.status(200).json({
+      title: "organization succesfully added",
     });
   });
 });
 
 app.post("/login", (req: Request, res: Response) => {
-  User.findOne({ email: req.body.email }, (err: Error, user: any) => {
-    console.log(user);
+  User.findOne({ email: req.body.email }, (err: Error, user: IUser) => {
     if (err)
       return res.status(500).json({
         title: "server error",
@@ -66,7 +96,7 @@ app.post("/login", (req: Request, res: Response) => {
       title: "login succesful",
       token: token,
       userId: user._id,
-      todos: user.todos
+      todos: user.todos,
     });
   });
 });
@@ -106,7 +136,7 @@ app.get("/todo", (req: Request, res: Response) => {
       return res.status(401).json({
         title: "not authorized",
       });
-    Todo.find({author: decoded.userId}, (err: Error, todos: ITodo[]) => {
+    Todo.find({ author: decoded.userId }, (err: Error, todos: ITodo[]) => {
       if (err) return console.log(err);
       return res.status(200).json({
         title: "success",
@@ -134,7 +164,7 @@ app.post("/todo", (req: Request, res: Response) => {
       isCompleted: false,
       author: decoded.userId,
     });
-    const savedTodo: ITodo = await newTodo.save()
+    const savedTodo: ITodo = await newTodo.save();
     const user: IUser | null = await User.findById(decoded.userId);
     if (!user) {
       return res.status(404).json({
