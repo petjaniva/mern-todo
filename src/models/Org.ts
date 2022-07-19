@@ -1,10 +1,12 @@
 import { Document, Schema, model, Types } from "mongoose";
 import { IUser } from "./User";
+import { ITodo } from "./Todo";
 
 export interface IOrg {
   name: string;
   code: string;
-  members: IUser[];
+  members: Types.ObjectId[];
+  todos: Types.ObjectId[];
 };
 
 const orgSchema = new Schema<IOrg>({
@@ -21,6 +23,7 @@ const orgSchema = new Schema<IOrg>({
     required: true,
   },
   members: [{ type: Schema.Types.ObjectId, ref: "User" }],
+  todos: [{ type: Schema.Types.ObjectId, ref: "Todo" }],
 });
 
 const Org = model<IOrg>("Org", orgSchema);

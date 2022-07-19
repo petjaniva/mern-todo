@@ -16,6 +16,7 @@ const newOrg: IOrg = {
   name: "test org",
   code: "dupdup",
   members: [],
+  todos: [],
 };
 const orgUser: IUser = {
   email: "tester@org.com",
@@ -47,6 +48,7 @@ describe("user-tests", () => {
         .expect(200);
       token = { token: `${response.body.token}` };
       userId = response.body.userId;
+      expect(userId).toBeDefined();
     });
     it("logging in with bad credentials", async () => {
       await request(app)
@@ -88,6 +90,10 @@ describe("user-tests", () => {
     it("todo has correct author", async () => {
       const response = await request(app).get("/todo").set(token).expect(200);
       expect(response.body.todos[0].author).toBe(userId);
+    });
+    it("todo has date", async () => {
+      const response = await request(app).get("/todo").set(token).expect(200);
+      expect(response.body.todos[0].date).toBeDefined();
     });
   });
   describe("org tests", () => {

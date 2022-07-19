@@ -10,6 +10,7 @@ const Signup = ({ renderLogin }: SigninProps) => {
   const [password, setPassword] = React.useState("");
   const [confirmPassword, setConfirmPassword] = React.useState("");
   const [disabled, setDisabled] = React.useState(true);
+  const [orgCode, setOrgCode] = React.useState("");
 
   const onSubmit = () => {
     if (password.length >= 6) {
@@ -17,6 +18,7 @@ const Signup = ({ renderLogin }: SigninProps) => {
         .post("/signup", {
           email: username,
           password: password,
+          orgCode: orgCode,
         })
         renderLogin();
     }
@@ -58,6 +60,15 @@ const Signup = ({ renderLogin }: SigninProps) => {
             className="w-full px-3 py-2 border border-gray-400 rounded-md"
             type="password"
             placeholder="password"
+          />
+        </div>
+        <div className="mb-4">
+          <label>Organization code</label>
+          <input
+            onChange={(e) => setOrgCode(e.target.value)}
+            className="w-full px-3 py-2 border border-gray-400 rounded-md"
+            type="text"
+            placeholder="Organization code"
           />
         </div>
         <div className="flex justify-between items-centered">

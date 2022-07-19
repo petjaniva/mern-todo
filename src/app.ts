@@ -43,14 +43,15 @@ app.post("/signup", (req: Request, res: Response) => {
         error: "Email already in use",
       });
     }
+    if (userOrg){
+      userOrg.members.push(newUser._id);
+    }
     return res.status(200).json({
       title: "user succesfully added",
       user: newUser,
     });
   });
-  if (userOrg){
-    //TODO: add user to the org
-  }
+
 });
 
 app.post("/org", (req: Request, res: Response) => {
@@ -131,7 +132,15 @@ app.get("/todo", (req: Request, res: Response) => {
     });
   }
   jwt.verify(token, "secretkey", (err: Error | null, decoded: any) => {
-    console.log("decoded: " + decoded);
+    let orgTodos: ITodo[] = [];
+    if (decoded.org)
+    {
+      decoded.org.todos.map((todoId: mongoose.Types.ObjectId)=> {
+        Todo.findOne({_id: todoId}, (err: Error, todo: ITodo) => {
+          orgTodos.push(todo);
+        })
+      })
+    }
     if (err)
       return res.status(401).json({
         title: "not authorized",
@@ -141,6 +150,7 @@ app.get("/todo", (req: Request, res: Response) => {
       return res.status(200).json({
         title: "success",
         todos: todos,
+        orgTodos: orgTodos,
       });
     });
   });
@@ -163,6 +173,7 @@ app.post("/todo", (req: Request, res: Response) => {
       title: req.body.title,
       isCompleted: false,
       author: decoded.userId,
+      date: new Date()
     });
     const savedTodo: ITodo = await newTodo.save();
     const user: IUser | null = await User.findById(decoded.userId);
