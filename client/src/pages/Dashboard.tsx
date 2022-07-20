@@ -7,6 +7,7 @@ import TodoList, { Todo } from "../components/todo/TodoList";
 const Dashboard = () => {
   const localToken = localStorage.getItem("token");
   const [todoList, setTodoList] = React.useState<Todo[]>([]);
+  const [orgTodoList, setOrgTodoList] = React.useState<Todo[]>([]);
   /*const [userName, setUserName] = React.useState<string>("");
 
   React.useEffect(() => {
@@ -26,6 +27,7 @@ const Dashboard = () => {
       axios.get("/todo", { headers: { token: localToken } }).then((res) => {
         if (res.status === 200) {
           setTodoList(res.data.todos);
+          setOrgTodoList(res.data.orgTodos);
         }
       }); 
     }
@@ -40,6 +42,7 @@ const Dashboard = () => {
         </h1>
         <TodoForm todos={todoList} setTodos={setTodoList} />
         <TodoList todos={todoList}/>
+        <TodoList todos={orgTodoList}/>
       </div>
     </>
   );

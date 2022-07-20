@@ -19,7 +19,7 @@ const todoSchema = new Schema<ITodo>({
     isCompleted: Boolean,
     author: {type: Schema.Types.ObjectId, ref: 'User'},
     date: Date,
-    org: {type: Schema.Types.ObjectId, ref: 'User', default: null},
+    org: {type: Schema.Types.ObjectId, ref: 'Org', default: null},
 });
 
 const Todo = model<ITodo>('Todo', todoSchema);

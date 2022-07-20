@@ -182,7 +182,22 @@ app.post("/todo", (req: Request, res: Response) => {
         title: "user not found",
       });
     }
-    user.todos.concat(savedTodo._id!);
+    if (!req.body.org)
+    {
+      user.todos.concat(savedTodo._id!);
+    }
+    else
+    {
+      Org.findOne({_id: decoded.org}, (err: Error, org: IOrg) => {
+        if (err)
+        {
+          return res.status(404).json({
+            title: "org not found",
+          })
+        }
+        org.todos.concat(savedTodo._id!);
+      });
+    }
     return res.status(200).json({
       title: "successfully added",
       todo: newTodo,
