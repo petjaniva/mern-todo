@@ -96,7 +96,7 @@ app.post("/login", (req: Request, res: Response) => {
     return res.status(200).json({
       title: "login succesful",
       token: token,
-      userId: user._id,
+      user: user,
       todos: user.todos,
     });
   });
@@ -114,9 +114,7 @@ app.get("/user", (req: Request, res: Response) => {
         if (err) return console.log(err);
         return res.status(200).json({
           title: "success",
-          /* user: {
-            username: user.username,
-          }, */
+          user: decoded,
         });
       });
     });

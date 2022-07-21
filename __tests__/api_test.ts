@@ -47,7 +47,7 @@ describe("user-tests", () => {
         .send(newUser)
         .expect(200);
       token = { token: `${response.body.token}` };
-      userId = response.body.userId;
+      userId = response.body.user._id;
       expect(userId).toBeDefined();
     });
     it("logging in with bad credentials", async () => {

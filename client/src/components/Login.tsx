@@ -1,5 +1,6 @@
 import React from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom"
 
 interface LoginProps {
     renderSignup: () => void;
@@ -16,6 +17,7 @@ interface LoginData {
 const Login = ({renderSignup}: LoginProps) => {
     const [email, setEmail] = React.useState("");
     const [password, setPassword] = React.useState("");
+    const navigate = useNavigate();
 
     const onSubmit = () => {
         axios.post('/login', {
@@ -25,7 +27,8 @@ const Login = ({renderSignup}: LoginProps) => {
             if (res.status === 200){
                 const token = res.data.token;
                 localStorage.setItem('token', token);
-                window.location.href = '/dashboard';
+                navigate("/dashboard");
+                //window.location.href = '/dashboard';
                 //todo: setTodos(res.data.todos);
             }
             else {
@@ -33,6 +36,7 @@ const Login = ({renderSignup}: LoginProps) => {
             }
         })
     }
+
     return (
         <div style={{height: '300px'}}>
             <h1 className="text-center text-green-400 font-bold text-xl">login</h1>

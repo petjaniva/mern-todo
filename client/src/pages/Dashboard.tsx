@@ -3,24 +3,21 @@ import Navbar from "../components/Navbar";
 import axios from "axios";
 import TodoForm from "../components/todo/TodoForm";
 import TodoList, { Todo } from "../components/todo/TodoList";
+import { IUser } from "../../../src/models/User";
 
 const Dashboard = () => {
   const localToken = localStorage.getItem("token");
   const [todoList, setTodoList] = React.useState<Todo[]>([]);
   const [orgTodoList, setOrgTodoList] = React.useState<Todo[]>([]);
-  /*const [userName, setUserName] = React.useState<string>("");
+  const [user, setUser] = React.useState<IUser>();
 
   React.useEffect(() => {
     if (localToken) {
-      axios
-        .get("/user", { headers: { token: localToken } })
-        .then((res) => {console.log(res);
-          setUserName(res.data.userName);
-        
-        });
-       
+      axios.get("/user", { headers: { token: localToken } }).then((res) => {
+        setUser(res.data.user);
+      });
     }
-  }, [localToken]);*/
+  }, [localToken]);
 
   React.useEffect(() => {
     if (localToken) {
@@ -29,7 +26,7 @@ const Dashboard = () => {
           setTodoList(res.data.todos);
           setOrgTodoList(res.data.orgTodos);
         }
-      }); 
+      });
     }
   }, [localToken]);
 
@@ -40,11 +37,12 @@ const Dashboard = () => {
         <h1 className="font-bold text-green-400 text-center text-xl">
           my todos
         </h1>
-        <TodoForm todos={todoList} setTodos={setTodoList} />
-        <TodoList todos={todoList}/>
-        <TodoList todos={orgTodoList}/>
+        <TodoForm todos={todoList} setTodos={setTodoList} user={user!}/>
+        <TodoList todos={todoList} />
+        <TodoList todos={orgTodoList} />
       </div>
     </>
   );
 };
+
 export default Dashboard;
