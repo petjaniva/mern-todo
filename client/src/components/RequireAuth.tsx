@@ -1,4 +1,4 @@
-const RequireAuth = (Component: any, props?: any) => {
+/* const RequireAuth = (Component: any, props?: any) => {
 
       const token = localStorage.getItem('token');
   
@@ -9,4 +9,4 @@ const RequireAuth = (Component: any, props?: any) => {
     
   }
   
-  export default RequireAuth;
+  export default RequireAuth; */
