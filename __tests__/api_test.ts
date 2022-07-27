@@ -23,6 +23,16 @@ const orgUser: IUser = {
   password: "passupassu",
   todos: [],
 }
+const testTodo: ITodo = {
+  title: "test todo",
+  isCompleted: false,
+  author: userId,
+};
+const anotherTodo: ITodo = {
+  title: "test2 todo",
+  isCompleted: false,
+  author: userId,
+};
 beforeAll(async () => {
   await User.deleteMany({});
   await Todo.deleteMany({});
@@ -64,16 +74,7 @@ describe("user-tests", () => {
     });
   });
   describe("todo tests", () => {
-    const testTodo: ITodo = {
-      title: "test todo",
-      isCompleted: false,
-      author: userId,
-    };
-    const anotherTodo: ITodo = {
-      title: "test2 todo",
-      isCompleted: false,
-      author: userId,
-    };
+  
     it("posting a todo works", async () => {
       await request(app).post("/todo").send(testTodo).set(token).expect(200);
     });
@@ -104,6 +105,11 @@ describe("user-tests", () => {
       const response = await request(app).post("/signup").send(orgUser).send({orgCode: "dupdup"}).expect(200);
       expect(response.body.user.org).toBeDefined();
     });
+    it("create an org todo", async () => {
+      const response = await request(app).post("/login").send(orgUser).expect(200);
+      const orgUserToken = {token : response.body.token};
+      const todoREsponse = await request(app).post("/todo").set(orgUserToken).send(anotherTodo).send(response.body.user.org).expect(200);
+    })
   });
 
 });
