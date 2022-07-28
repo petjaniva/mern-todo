@@ -153,6 +153,29 @@ app.get("/todo", (req: Request, res: Response) => {
     });
   });
 });
+app.put("/todo/:todoId", (req: Request, res: Response) => {
+  let token = req.headers.token;
+  if (Array.isArray(token)) token = token[0];
+  if (!token) {
+    return res.status(401).json({
+      title: "not authorized",
+    });
+  }
+  const updatedTodo: ITodo = JSON.parse(req.params.todo);
+    jwt.verify(token, "secretkey", async (err: Error | null, decoded: any) => {
+      if (err){
+        return res.status(401).json({
+          title: "not authorized",
+        });}
+        Todo.findByIdAndUpdate(req.params.todoId, updatedTodo)
+       return res.status(200).json({
+        title: "successfully updated",
+        todo: updatedTodo,
+      });
+    });
+  }
+);
+
 app.post("/todo", (req: Request, res: Response) => {
   let token = req.headers.token;
   if (Array.isArray(token)) token = token[0];

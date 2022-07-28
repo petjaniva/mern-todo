@@ -119,5 +119,4 @@ describe("user-tests", () => {
       expect(todoResponse.body.todo.org).toEqual(response.body.user.org);
     })
   });
-
 });

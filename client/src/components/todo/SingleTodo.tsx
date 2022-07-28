@@ -1,19 +1,23 @@
 import * as React from "react";
-import {ITodo} from "../../../../src/models/Todo"
+import { Todo } from "./TodoList";
 
-const SingleTodo = (todo : ITodo) => {
-    if (todo.isCompleted)
+interface ITodoProps {
+  todo: Todo;
+}
+
+const SingleTodo: React.FC<ITodoProps> = (props: ITodoProps) => {
+    if (props.todo.isCompleted)
     {
         return (<div
             className="border border-grey-400 p-4 rounded-md flex justify-between items-center line-through"
-            key={todo._id!.toString()}
+            key={props.todo._id!.toString()}
           >
-            {todo.title}
+            {props.todo.title}
             <input
               type="button"
               className="py-2 px-3 bg-green-400 text-white rounded-md cursor-pointer"
-              value="DONE"
-              onClick={() => (todo.isCompleted = false)}
+              value="UNDONE"
+              onClick={() => (props.todo.isCompleted = false)}
             />
           </div>)
     }
@@ -21,14 +25,14 @@ const SingleTodo = (todo : ITodo) => {
     {
         return (<div
             className="border border-grey-400 p-4 rounded-md flex justify-between items-center"
-            key={todo._id!.toString()}
+            key={props.todo._id!.toString()}
           >
-            {todo.title}
+            {props.todo.title}
             <input
               type="button"
               className="py-2 px-3 bg-green-400 text-white rounded-md cursor-pointer"
               value="DONE"
-              onClick={() => (todo.isCompleted = true)}
+              onClick={() => (props.todo.isCompleted = true)}
             />
           </div>)
     }
