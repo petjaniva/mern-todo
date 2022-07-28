@@ -3,7 +3,7 @@ import app from "../src/app";
 import request from "supertest";
 import Todo, { ITodo } from "../src/models/Todo";
 import Org, { IOrg } from "../src/models/Org";
-import { Schema, model, Types } from "mongoose";
+import { Schema, model, Types, connection} from "mongoose";
 
 let userId: Types.ObjectId;
 let token: object;
@@ -119,4 +119,23 @@ describe("user-tests", () => {
       expect(todoResponse.body.todo.org).toEqual(response.body.user.org);
     })
   });
-});
+  describe("update tests", () => {
+    it("create a new todo and update it", async () => {
+      
+        const response = await request(app).post("/login").send(orgUser).expect(200);
+        const orgUserToken = {token : response.body.token};
+        let updatableTodo = {
+          title: "test updatable todo",
+          isCompleted: false,
+          author: userId,
+          org: response.body.user.org,
+        }
+        const todoResponse = await request(app).post("/todo").set(orgUserToken).send(updatableTodo).expect(200);
+        updatableTodo.title = "updated title";
+        console.log(todoResponse.body.todo._id);
+        const updateResponse = await request(app).put(`/todo/:${todoResponse.body.todo._id}`).set(orgUserToken).send(updatableTodo).expect(200);
+        expect(updateResponse.body.todo.title).toEqual(updatableTodo.title);
+  })
+})
+})
+

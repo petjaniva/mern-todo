@@ -43,7 +43,7 @@ app.post("/signup", (req: Request, res: Response) => {
         error: "Email already in use",
       });
     }
-    if (userOrg){
+    if (userOrg) {
       userOrg.members.push(newUser._id);
     }
     return res.status(200).json({
@@ -51,7 +51,6 @@ app.post("/signup", (req: Request, res: Response) => {
       user: newUser,
     });
   });
-
 });
 
 app.post("/org", (req: Request, res: Response) => {
@@ -131,13 +130,12 @@ app.get("/todo", (req: Request, res: Response) => {
   }
   jwt.verify(token, "secretkey", (err: Error | null, decoded: any) => {
     let orgTodos: ITodo[] = [];
-    if (decoded.org)
-    {
-      decoded.org.todos.map((todoId: mongoose.Types.ObjectId)=> {
-        Todo.findOne({_id: todoId}, (err: Error, todo: ITodo) => {
+    if (decoded.org) {
+      decoded.org.todos.map((todoId: mongoose.Types.ObjectId) => {
+        Todo.findOne({ _id: todoId }, (err: Error, todo: ITodo) => {
           orgTodos.push(todo);
-        })
-      })
+        });
+      });
     }
     if (err)
       return res.status(401).json({
@@ -154,30 +152,41 @@ app.get("/todo", (req: Request, res: Response) => {
   });
 });
 app.put("/todo/:todoId", (req: Request, res: Response) => {
-  let token = req.headers.token;
+  try {let token = req.headers.token;
   if (Array.isArray(token)) token = token[0];
   if (!token) {
     return res.status(401).json({
       title: "not authorized",
     });
   }
-  const updatedTodo: ITodo = JSON.parse(req.params.todo);
-    jwt.verify(token, "secretkey", async (err: Error | null, decoded: any) => {
-      if (err){
-        return res.status(401).json({
-          title: "not authorized",
-        });}
-        Todo.findByIdAndUpdate(req.params.todoId, updatedTodo, (err: Error) => {
-          if (err)
-            return res.status(400);
-        });
-       return res.status(200).json({
-        title: "successfully updated",
-        todo: updatedTodo,
-      });
-    });
+  const updatedTodo = {
+    title: req.body.title,
+    author: req.body.author,
+    isComleted: req.body.isComleted,
+    _id: req.body._id,
+    date: req.body.date,
+    org: req.body.org,
   }
-);
+  console.log(updatedTodo);
+  jwt.verify(token, "secretkey", async (err: Error | null, decoded: any) => {
+    if (err) {
+      return res.status(401).json({
+        title: "not authorized",
+      });
+    }
+    Todo.findByIdAndUpdate(req.params.todoId, updatedTodo, (err: Error) => {
+      if (err) return res.status(400);
+    });
+    return res.status(200).json({
+      title: "successfully updated",
+      todo: updatedTodo,
+    });
+  });}
+  catch (e)
+  {
+    console.log(e);
+  }
+});
 
 app.post("/todo", (req: Request, res: Response) => {
   let token = req.headers.token;
@@ -188,7 +197,6 @@ app.post("/todo", (req: Request, res: Response) => {
     });
   }
   jwt.verify(token, "secretkey", async (err: Error | null, decoded: any) => {
-    console.log(JSON.stringify(decoded));
     if (err)
       return res.status(401).json({
         title: "not authorized",
@@ -197,7 +205,7 @@ app.post("/todo", (req: Request, res: Response) => {
       title: req.body.title,
       isCompleted: false,
       author: decoded.userId,
-      date: new Date()
+      date: new Date(),
     });
     const savedTodo: ITodo = await newTodo.save();
     const user: IUser | null = await User.findById(decoded.userId);
@@ -206,18 +214,14 @@ app.post("/todo", (req: Request, res: Response) => {
         title: "user not found",
       });
     }
-    if (!req.body.org)
-    {
+    if (!req.body.org) {
       user.todos.concat(savedTodo._id!);
-    }
-    else
-    {
-      Org.findOne({_id: decoded.org}, (err: Error, org: IOrg) => {
-        if (err)
-        {
+    } else {
+      Org.findOne({ _id: decoded.org }, (err: Error, org: IOrg) => {
+        if (err) {
           return res.status(404).json({
             title: "org not found",
-          })
+          });
         }
         org.todos.concat(savedTodo._id!);
       });
