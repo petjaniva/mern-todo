@@ -151,39 +151,39 @@ app.get("/todo", (req: Request, res: Response) => {
     });
   });
 });
+
 app.put("/todo/:todoId", (req: Request, res: Response) => {
-  try {let token = req.headers.token;
-  if (Array.isArray(token)) token = token[0];
-  if (!token) {
-    return res.status(401).json({
-      title: "not authorized",
-    });
-  }
-  const updatedTodo = {
-    title: req.body.title,
-    author: req.body.author,
-    isComleted: req.body.isComleted,
-    _id: req.body._id,
-    date: req.body.date,
-    org: req.body.org,
-  }
-  console.log(updatedTodo);
-  jwt.verify(token, "secretkey", async (err: Error | null, decoded: any) => {
-    if (err) {
+  try {
+    let token = req.headers.token;
+    if (Array.isArray(token)) token = token[0];
+    if (!token) {
       return res.status(401).json({
         title: "not authorized",
       });
     }
-    Todo.findByIdAndUpdate(req.params.todoId, updatedTodo, (err: Error) => {
-      if (err) return res.status(400);
+    const updatedTodo = {
+      title: req.body.title,
+      author: req.body.author,
+      isComleted: req.body.isComleted,
+      _id: req.body._id,
+      date: req.body.date,
+      org: req.body.org,
+    };
+    jwt.verify(token, "secretkey", async (err: Error | null, decoded: any) => {
+      if (err) {
+        return res.status(401).json({
+          title: "not authorized",
+        });
+      }
+      Todo.findByIdAndUpdate(req.params.todoId, updatedTodo, (err: Error) => {
+        if (err) return res.status(400);
+      });
+      return res.status(200).json({
+        title: "successfully updated",
+        todo: updatedTodo,
+      });
     });
-    return res.status(200).json({
-      title: "successfully updated",
-      todo: updatedTodo,
-    });
-  });}
-  catch (e)
-  {
+  } catch (e) {
     console.log(e);
   }
 });

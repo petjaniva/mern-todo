@@ -3,7 +3,7 @@ import app from "../src/app";
 import request from "supertest";
 import Todo, { ITodo } from "../src/models/Todo";
 import Org, { IOrg } from "../src/models/Org";
-import { Schema, model, Types, connection} from "mongoose";
+import { Schema, model, Types, connection } from "mongoose";
 
 let userId: Types.ObjectId;
 let token: object;
@@ -22,7 +22,7 @@ const orgUser: IUser = {
   email: "tester@org.com",
   password: "passupassu",
   todos: [],
-}
+};
 
 beforeAll(async () => {
   await User.deleteMany({});
@@ -75,7 +75,6 @@ describe("user-tests", () => {
     author: userId,
   };
   describe("todo tests", () => {
-
     it("posting a todo works", async () => {
       await request(app).post("/todo").send(testTodo).set(token).expect(200);
     });
@@ -103,39 +102,59 @@ describe("user-tests", () => {
       await request(app).post("/org").send(newOrg).expect(200);
     });
     it("create a user that belongs to a org", async () => {
-      const response = await request(app).post("/signup").send(orgUser).send({orgCode: "dupdup"}).expect(200);
+      const response = await request(app)
+        .post("/signup")
+        .send(orgUser)
+        .send({ orgCode: "dupdup" })
+        .expect(200);
       expect(response.body.user.org).toBeDefined();
     });
     it("create an org todo", async () => {
-      const response = await request(app).post("/login").send(orgUser).expect(200);
-      const orgUserToken = {token : response.body.token};
+      const response = await request(app)
+        .post("/login")
+        .send(orgUser)
+        .expect(200);
+      const orgUserToken = { token: response.body.token };
       const orgTodo = {
         title: "test org todo",
         isCompleted: false,
         author: userId,
         org: response.body.user.org,
-      }
-      const todoResponse = await request(app).post("/todo").set(orgUserToken).send(orgTodo).expect(200);
+      };
+      const todoResponse = await request(app)
+        .post("/todo")
+        .set(orgUserToken)
+        .send(orgTodo)
+        .expect(200);
       expect(todoResponse.body.todo.org).toEqual(response.body.user.org);
-    })
+    });
   });
   describe("update tests", () => {
     it("create a new todo and update it", async () => {
-      
-        const response = await request(app).post("/login").send(orgUser).expect(200);
-        const orgUserToken = {token : response.body.token};
-        let updatableTodo = {
-          title: "test updatable todo",
-          isCompleted: false,
-          author: userId,
-          org: response.body.user.org,
-        }
-        const todoResponse = await request(app).post("/todo").set(orgUserToken).send(updatableTodo).expect(200);
-        updatableTodo.title = "updated title";
-        console.log(todoResponse.body.todo._id);
-        const updateResponse = await request(app).put(`/todo/:${todoResponse.body.todo._id}`).set(orgUserToken).send(updatableTodo).expect(200);
-        expect(updateResponse.body.todo.title).toEqual(updatableTodo.title);
-  })
-})
-})
-
+      const response = await request(app)
+        .post("/login")
+        .send(orgUser)
+        .expect(200);
+      const orgUserToken = { token: response.body.token };
+      let updatableTodo = {
+        title: "test updatable todo",
+        isCompleted: false,
+        author: userId,
+        org: response.body.user.org,
+      };
+      const todoResponse = await request(app)
+        .post("/todo")
+        .set(orgUserToken)
+        .send(updatableTodo)
+        .expect(200);
+      updatableTodo.title = "updated title";
+      console.log(todoResponse.body.todo._id);
+      const updateResponse = await request(app)
+        .put(`/todo/:${todoResponse.body.todo._id}`)
+        .set(orgUserToken)
+        .send(updatableTodo)
+        .expect(200);
+      expect(updateResponse.body.todo.title).toEqual(updatableTodo.title);
+    });
+  });
+});

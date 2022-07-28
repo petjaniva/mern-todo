@@ -1,11 +1,16 @@
 import * as React from "react";
 import { Todo } from "./TodoList";
+import axios from "axios";
 
 interface ITodoProps {
   todo: Todo;
 }
 
 const SingleTodo: React.FC<ITodoProps> = (props: ITodoProps) => {
+  const onDoneClick = (todo: Todo) =>{
+    todo.isCompleted = !todo.isCompleted;
+    axios.put(`/todo/${todo._id}`, todo);
+  }
     if (props.todo.isCompleted)
     {
         return (<div
@@ -17,7 +22,7 @@ const SingleTodo: React.FC<ITodoProps> = (props: ITodoProps) => {
               type="button"
               className="py-2 px-3 bg-green-400 text-white rounded-md cursor-pointer"
               value="UNDONE"
-              onClick={() => (props.todo.isCompleted = false)}
+              onClick={() => onDoneClick(props.todo)}
             />
           </div>)
     }
@@ -32,7 +37,7 @@ const SingleTodo: React.FC<ITodoProps> = (props: ITodoProps) => {
               type="button"
               className="py-2 px-3 bg-green-400 text-white rounded-md cursor-pointer"
               value="DONE"
-              onClick={() => (props.todo.isCompleted = true)}
+              onClick={() => onDoneClick(props.todo)}
             />
           </div>)
     }
