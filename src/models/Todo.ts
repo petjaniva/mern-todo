@@ -13,7 +13,6 @@ export interface ITodo{
 
 const todoSchema = new Schema<ITodo>({
     title: {
-        unique: true,
         type: String
     },
     isCompleted: Boolean,

@@ -167,7 +167,10 @@ app.put("/todo/:todoId", (req: Request, res: Response) => {
         return res.status(401).json({
           title: "not authorized",
         });}
-        Todo.findByIdAndUpdate(req.params.todoId, updatedTodo)
+        Todo.findByIdAndUpdate(req.params.todoId, updatedTodo, (err: Error) => {
+          if (err)
+            return res.status(400);
+        });
        return res.status(200).json({
         title: "successfully updated",
         todo: updatedTodo,
