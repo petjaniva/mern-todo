@@ -10,6 +10,21 @@ const Dashboard = () => {
   const [todoList, setTodoList] = React.useState<Todo[]>([]);
   const [orgTodoList, setOrgTodoList] = React.useState<Todo[]>([]);
   const [user, setUser] = React.useState<IUser>();
+  const eventSource = new EventSource("/events");
+
+  const eventGetTodos = () => {
+    if (localToken) {
+      axios.get("/todo", { headers: { token: localToken } }).then((res) => {
+        console.log("event");
+        if (res.status === 200) {
+          setTodoList(res.data.todos);
+          setOrgTodoList(res.data.orgTodos);
+        }
+      });
+    }
+  };
+
+  eventSource.addEventListener('update', eventGetTodos);
 
   React.useEffect(() => {
     if (localToken) {
@@ -37,9 +52,9 @@ const Dashboard = () => {
         <h1 className="font-bold text-green-400 text-center text-xl">
           my todos
         </h1>
-        <TodoForm todos={todoList} setTodos={setTodoList} user={user!}/>
-        <TodoList todos={todoList} />
-        <TodoList todos={orgTodoList} />
+        <TodoForm todos={todoList} setTodos={setTodoList} user={user!} />
+        <TodoList key="ownTodos" todos={todoList} />
+        <TodoList key="orgTodos" todos={orgTodoList} />
       </div>
     </>
   );

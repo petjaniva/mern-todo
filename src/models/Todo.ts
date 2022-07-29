@@ -11,7 +11,7 @@ export interface ITodo{
     org?: Types.ObjectId | null;
 }
 
-const todoSchema = new Schema<ITodo>({
+export const todoSchema = new Schema<ITodo>({
     title: {
         type: String
     },

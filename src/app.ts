@@ -18,12 +18,43 @@ const MONGODB_URI =
     ? process.env.TEST_MONGODB_URI!
     : process.env.MONGODB_URI!;
 
-mongoose.connect(MONGODB_URI);
+mongoose.connect(MONGODB_URI).then(()=> run().catch(console.dir));
+
+let clients: Array<any> = [];
+
+async function run() {
+  const mongoClient = await mongoose.connection.getClient();
+  const db = mongoClient.db();
+  let changeStream;
+  const collection = await db.collection("todos");
+  changeStream = await collection.watch();
+  changeStream.on("change", (next) => {{
+    clients.forEach(client => client.res.write('update'))
+    console.log("change", next);
+  }});
+} 
 
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+const eventsHandler = (req: Request, res: Response, next: any) => {
+  const headers = {
+    'Content-Type': 'text/event-stream',
+    'Connection': 'keep-alive',
+    'Cache-Control': 'no-cache'
+  };
+  res.writeHead(200, headers);
+  const clientId = Date.now();
+  const newClient = {
+    id: clientId,
+    res
+  };
+  console.log(newClient.id.toString());
+  clients.push(newClient);
+}
+
+app.get("/events", eventsHandler);
 app.post("/signup", (req: Request, res: Response) => {
   let userOrg: IOrg | null = null;
   if (req.body.orgCode) {
@@ -164,7 +195,7 @@ app.put("/todo/:todoId", (req: Request, res: Response) => {
     const updatedTodo = {
       title: req.body.title,
       author: req.body.author,
-      isComleted: req.body.isComleted,
+      isCompleted: req.body.isCompleted,
       _id: req.body._id,
       date: req.body.date,
       org: req.body.org,
@@ -239,5 +270,8 @@ app.listen(port, (err?: Error) => {
   if (err) return console.log(err);
   console.log("server running on port: ", port);
 });
+
+
+
 
 export default app;

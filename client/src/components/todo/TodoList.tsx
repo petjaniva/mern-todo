@@ -16,7 +16,7 @@ const TodoList = ({ todos }: TodoListProps) => {
   return (
     <div>
       {todos.map((todo) => (
-        <SingleTodo todo={todo} />
+        <SingleTodo key={todo._id!.toString()} todo={todo} />
       ))}
     </div>
   );

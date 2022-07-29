@@ -8,8 +8,10 @@ interface ITodoProps {
 
 const SingleTodo: React.FC<ITodoProps> = (props: ITodoProps) => {
   const onDoneClick = (todo: Todo) =>{
-    todo.isCompleted = !todo.isCompleted;
-    axios.put(`/todo/${todo._id}`, todo);
+    const token = localStorage.getItem("token");
+    if (token)
+    {todo.isCompleted = !todo.isCompleted;
+    axios.put(`/todo/${todo._id}`, todo, { headers: { token: token } });}
   }
     if (props.todo.isCompleted)
     {
