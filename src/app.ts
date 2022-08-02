@@ -151,6 +151,27 @@ app.get("/user", (req: Request, res: Response) => {
   }
 });
 
+//api to get spesific user by id
+app.get("/user/:id", (req: Request, res: Response) => {
+  let token = req.headers.token;
+  if (typeof token === "string") {
+    jwt.verify(token, "secretkey", (err: Error | null, decoded: any) => {
+      if (err)
+        return res.status(401).json({
+          title: "not authorized",
+        });
+      User.findOne({ _id: req.params.id }, (err: Error, user: any) => {
+        if (err) return console.log(err);
+        return res.status(200).json({
+          title: "success",
+          user: user,
+        });
+      });
+    });
+  }
+})
+
+
 app.get("/todo", (req: Request, res: Response) => {
   let token = req.headers.token;
   if (Array.isArray(token)) token = token[0];

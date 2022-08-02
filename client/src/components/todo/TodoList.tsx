@@ -15,10 +15,12 @@ interface TodoListProps {
 }
 
 const TodoList = ({ todos }: TodoListProps) => {
+  const token = localStorage.getItem("token");
   return (
+    
     <div>
       {todos.map((todo) => (
-        <SingleTodo key={todo._id!.toString()} todo={todo} />
+        <SingleTodo key={todo._id!.toString()} todo={todo} token={(token ? token : "")} />
       ))}
     </div>
   );
