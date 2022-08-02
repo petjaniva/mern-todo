@@ -19,40 +19,22 @@ const SingleTodo: React.FC<ITodoProps> = (props: ITodoProps) => {
     if (token)
     {axios.delete(`/todo/${todo._id}`, { headers: { token: token } });}
   }
-    if (props.todo.isCompleted)
-    {
+
         return (<div
             className="border border-grey-400 p-4 rounded-md flex items-center justify-end"
             key={props.todo._id!.toString()}
           >
-            <div className="line-through mr-auto">
-            {props.todo.title}
-            </div>
+            <div className={"mr-auto" + (props.todo.isCompleted ? 'line-through' : '')}>
+            {props.todo.title}           </div>
             <input
               type="button"
               className="py-2 px-4 bg-green-400 text-white rounded-md cursor-pointer"
-              value="UNDONE"
+              value={(props.todo.isCompleted ? 'UNDONE' : 'DONE')}
               onClick={() => onDoneClick(props.todo)}
             />
             <div className="px-2"></div>
             <AiFillDelete className="w-6 h-6 cursor-pointer" onClick={() =>onDeleteClick(props.todo) }/>
           </div>)
-    }
-    else 
-    {
-        return (<div
-            className="border border-grey-400 p-4 rounded-md flex justify-between items-center"
-            key={props.todo._id!.toString()}
-          >
-            {props.todo.title}
-            <input
-              type="button"
-              className="py-2 px-3 bg-green-400 text-white rounded-md cursor-pointer"
-              value="DONE"
-              onClick={() => onDoneClick(props.todo)}
-            />
-            <AiFillDelete />
-          </div>)
-    }
+    
 }
 export default SingleTodo;
