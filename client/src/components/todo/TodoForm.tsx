@@ -15,6 +15,7 @@ const TodoForm = ({ todos, setTodos, user }: TodoFormProps) => {
     const token = localStorage.getItem("token");
     const orgTodo= document.getElementById("org") as HTMLInputElement;
     if (title.length > 0 && token) {
+      console.log("on subit and in if");
       axios
         .post("/todo", { title: title, org: orgTodo.checked }, { headers: { token: token } })
         .then((res) => {

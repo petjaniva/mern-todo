@@ -183,6 +183,29 @@ app.get("/todo", (req: Request, res: Response) => {
   });
 });
 
+//api to delete todos
+app.delete("/todo/:id", (req: Request, res: Response) => {
+  let token = req.headers.token;
+  if (Array.isArray(token)) token = token[0];
+  if (!token) {
+    return res.status(401).json({
+      title: "not authorized",
+    });
+  }
+  jwt.verify(token, "secretkey", (err: Error | null, decoded: any) => {
+    if (err)
+      return res.status(401).json({
+        title: "not authorized",
+      });
+    Todo.findOneAndDelete({ _id: req.params.id }, (err: Error) => {
+      if (err) return console.log(err);
+      return res.status(200).json({
+        title: "success",
+      });
+    });
+  });
+});
+
 app.put("/todo/:todoId", (req: Request, res: Response) => {
   try {
     let token = req.headers.token;
