@@ -9,6 +9,8 @@ export interface ITodo{
     _id?: Types.ObjectId;
     date?: Date;
     org?: Types.ObjectId | null;
+    isWorkedOn?: boolean;
+    workedOnBy?: Types.ObjectId | null;
 }
 
 export const todoSchema = new Schema<ITodo>({
@@ -19,6 +21,8 @@ export const todoSchema = new Schema<ITodo>({
     author: {type: Schema.Types.ObjectId, ref: 'User'},
     date: Date,
     org: {type: Schema.Types.ObjectId, ref: 'Org', default: null},
+    isWorkedOn: Boolean,
+    workedOnBy: {type: Schema.Types.ObjectId, ref: 'User', default: null},
 });
 
 const Todo = model<ITodo>('Todo', todoSchema);

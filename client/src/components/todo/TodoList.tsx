@@ -1,5 +1,6 @@
 import { Types } from "mongoose";
 import * as React from "react";
+import { IUser } from "../../../../src/models/User";
 import SingleTodo from "./SingleTodo";
 
 export interface Todo {
@@ -8,19 +9,22 @@ export interface Todo {
   _id: Types.ObjectId;
   date: Date;
   author: Types.ObjectId;
+  isWorkedOn?: boolean;
+  workedOnBy?: Types.ObjectId | null;
 }
 
 interface TodoListProps {
   todos: Todo[];
+  user: IUser;
 }
 
-const TodoList = ({ todos }: TodoListProps) => {
+const TodoList = ({ todos, user }: TodoListProps) => {
   const token = localStorage.getItem("token");
   return (
     
     <div>
       {todos.map((todo) => (
-        <SingleTodo key={todo._id!.toString()} todo={todo} token={(token ? token : "")} />
+        <SingleTodo key={todo._id!.toString()} todo={todo} token={(token ? token : "")} user={user} />
       ))}
     </div>
   );

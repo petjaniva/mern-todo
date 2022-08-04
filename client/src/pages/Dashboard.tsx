@@ -66,8 +66,8 @@ const Dashboard = () => {
           my todos
         </h1>
         <TodoForm todos={todoList} setTodos={setTodoList} user={user!} />
-        <TodoList key="ownTodos" todos={todoList} />
-        <TodoList key="orgTodos" todos={orgTodoList} />
+        <TodoList key="ownTodos" todos={todoList} user={user!}/>
+        <TodoList key="orgTodos" todos={orgTodoList} user={user!}/>
       </div>
     </>
   );
