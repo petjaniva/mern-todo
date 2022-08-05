@@ -18,43 +18,31 @@ const MONGODB_URI =
     ? process.env.TEST_MONGODB_URI!
     : process.env.MONGODB_URI!;
 
-mongoose.connect(MONGODB_URI).then(()=> run().catch(console.dir));
+// mongoose.connect(MONGODB_URI).then(()=> run().catch(console.dir));
+mongoose.connect(MONGODB_URI);
 
-let clients: Array<any> = [];
-
-async function run() {
-  const mongoClient = await mongoose.connection.getClient();
-  const db = mongoClient.db();
-  let changeStream;
-  const collection = await db.collection("todos");
-  changeStream = await collection.watch();
-  changeStream.on("change", (next) => {{
-    clients.forEach(client => client.res.write('update'))
-    console.log("change", next);
-  }});
-} 
 
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-const eventsHandler = (req: Request, res: Response, next: any) => {
-  const headers = {
-    'Content-Type': 'text/event-stream',
-    'Connection': 'keep-alive',
-    'Cache-Control': 'no-cache'
-  };
-  res.writeHead(200, headers);
-  const clientId = Date.now();
-  const newClient = {
-    id: clientId,
-    res
-  };
-  console.log(newClient.id.toString());
-  clients.push(newClient);
+const writeEvent = (res: Response, data: string) => {
+  res.write(`data: ${data}\n\n`);
 }
 
-app.get("/events", eventsHandler);
+const sendEvent = (req: Request, res: Response) => {
+  res.writeHead(200, {
+    "Cache-Control": "no-cache",
+    Connection: "keep-alive",
+    "Content-Type": "text/event-stream",
+  });
+  writeEvent(res, "update");
+}
+
+app.get("/events", (req: Request, res: Response) => {
+  sendEvent(req, res);
+});
+
 app.post("/signup", (req: Request, res: Response) => {
   let userOrg: IOrg | null = null;
   if (req.body.orgCode) {
@@ -316,6 +304,37 @@ app.listen(port, (err?: Error) => {
 });
 
 
+// let clients: Array<any> = [];
+
+// async function run() {
+//   const mongoClient = await mongoose.connection.getClient();
+//   const db = mongoClient.db();
+//   let changeStream;
+//   const collection = await db.collection("todos");
+//   changeStream = await collection.watch();
+//   changeStream.on("change", (next) => {{
+//     clients.forEach(client => client.res.write('update'))
+//     console.log("change", next);
+//   }});
+// } 
+
+// const eventsHandler = (req: Request, res: Response, next: any) => {
+//   const headers = {
+//     'Content-Type': 'text/event-stream',
+//     'Connection': 'keep-alive',
+//     'Cache-Control': 'no-cache'
+//   };
+//   res.writeHead(200, headers);
+//   const clientId = Date.now();
+//   const newClient = {
+//     id: clientId,
+//     res
+//   };
+//   console.log(newClient.id.toString());
+//   clients.push(newClient);
+// }
+
+// app.get("/events", eventsHandler);
 
 
 export default app;
