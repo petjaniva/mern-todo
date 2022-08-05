@@ -90,7 +90,7 @@ const SingleTodo: React.FC<ITodoProps> = (props: ITodoProps) => {
         onClick={() => onDoneClick(props.todo)}
       />
       <div className="px-2"/>
-      <AiFillCheckCircle className="w-6 h-6 cursor-pointer" 
+      <AiFillCheckCircle className={(props.todo.isWorkedOn ? "to-blue-900" : "") + "w-6 h-6 cursor-pointer" }
       onClick={() => onWorkingOnClick(props.todo, props.user)}/>
       <div className="px-2"/>
       <AiFillDelete
