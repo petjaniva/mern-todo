@@ -18,17 +18,42 @@ const MONGODB_URI =
     ? process.env.TEST_MONGODB_URI!
     : process.env.MONGODB_URI!;
 
-// mongoose.connect(MONGODB_URI).then(()=> run().catch(console.dir));
-mongoose.connect(MONGODB_URI);
+ mongoose.connect(MONGODB_URI).then(()=> run().catch(console.dir));
+// mongoose.connect(MONGODB_URI);
 
+let clients: Array<any> = [];
+
+async function run() {
+  const mongoClient = await mongoose.connection.getClient();
+  const db = mongoClient.db();
+  let changeStream;
+  const collection = await db.collection("todos");
+  changeStream = await collection.watch();
+  changeStream.on("change", (next) => {
+    console.log("change");
+    clients.forEach(client => writeEvent(client.res, JSON.stringify(next)));
+  });
+} 
+
+const newClient = (res: Response) => {
+  const clientId = Date.now();
+  const newClient = {
+    id: clientId,
+    res
+  };
+  console.log(newClient.id.toString());
+  clients.push(newClient);
+}
 
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 const writeEvent = (res: Response, data: string) => {
+  const sseId = new Date().toDateString();
+  res.write(`id: ${sseId}\n`);
   res.write(`data: ${data}\n\n`);
-}
+};
 
 const sendEvent = (req: Request, res: Response) => {
   res.writeHead(200, {
@@ -36,12 +61,17 @@ const sendEvent = (req: Request, res: Response) => {
     Connection: "keep-alive",
     "Content-Type": "text/event-stream",
   });
-  writeEvent(res, "update");
+  newClient(res);
 }
 
 app.get("/events", (req: Request, res: Response) => {
-  sendEvent(req, res);
+  if (req.headers.accept === 'text/event-stream') {
+    sendEvent(req, res);
+  } else {
+    res.json({ message: 'Ok' });
+  }
 });
+
 
 app.post("/signup", (req: Request, res: Response) => {
   let userOrg: IOrg | null = null;

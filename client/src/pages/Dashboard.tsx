@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import axios from "axios";
 import TodoForm from "../components/todo/TodoForm";
@@ -10,32 +10,53 @@ const Dashboard = () => {
   const [todoList, setTodoList] = React.useState<Todo[]>([]);
   const [orgTodoList, setOrgTodoList] = React.useState<Todo[]>([]);
   const [user, setUser] = React.useState<IUser>();
-  
-//   React.useEffect(() => {
-//     const eventSource = new EventSource("/events");
-//     eventSource.onmessage = () => {
-//       axios.get("/todo", { headers: { token: localToken as string } }).then((res) => {
-//         console.log("event");
-//         if (res.status === 200) {
-//          setTodoList(res.data.todos);
-//            setOrgTodoList(res.data.orgTodos);
-//     }
-//   })
-// }
-//   })
-  
 
-  // const eventGetTodos = () => {
-  //   if (localToken) {
-  //     axios.get("/todo", { headers: { token: localToken } }).then((res) => {
-  //       console.log("event");
-  //       if (res.status === 200) {
-  //         setTodoList(res.data.todos);
-  //         setOrgTodoList(res.data.orgTodos);
-  //       }
-  //     });
-  //   }
-  // };
+  // useEffect(() => {
+  //   const source = new EventSource(`/events`);
+
+  //   source.addEventListener("open", () => {
+  //     console.log("SSE opened!");
+  //   });
+
+  //   source.addEventListener("message", (e) => {
+  //     console.log("message");
+  //   });
+
+  //   source.addEventListener("error", (e) => {
+  //     console.error("Error: ", e);
+  //   });
+
+  //   return () => {
+  //     source.close();
+  //   };
+  // }, []);
+  //   React.useEffect(() => {
+  //     const eventSource = new EventSource("/events");
+  //     eventSource.onmessage = () => {
+  //       axios.get("/todo", { headers: { token: localToken as string } }).then((res) => {
+  //         console.log("event");
+  //         if (res.status === 200) {
+  //          setTodoList(res.data.todos);
+  //            setOrgTodoList(res.data.orgTodos);
+  //     }
+  //   })
+  // }
+  //   })
+
+  setInterval(() => {
+    eventGetTodos();
+  }, 30000);
+
+  const eventGetTodos = () => {
+    if (localToken) {
+      axios.get("/todo", { headers: { token: localToken } }).then((res) => {
+        if (res.status === 200) {
+          setTodoList(res.data.todos);
+          setOrgTodoList(res.data.orgTodos);
+        }
+      });
+    }
+  };
 
   // eventSource.addEventListener('update', eventGetTodos);
 
@@ -47,16 +68,16 @@ const Dashboard = () => {
     }
   }, [localToken]);
 
-  React.useEffect(() => {
-    if (localToken) {
-      axios.get("/todo", { headers: { token: localToken } }).then((res) => {
-        if (res.status === 200) {
-          setTodoList(res.data.todos);
-          setOrgTodoList(res.data.orgTodos);
-        }
-      });
-    }
-  }, [localToken]);
+  // React.useEffect(() => {
+  //   if (localToken) {
+  //     axios.get("/todo", { headers: { token: localToken } }).then((res) => {
+  //       if (res.status === 200) {
+  //         setTodoList(res.data.todos);
+  //         setOrgTodoList(res.data.orgTodos);
+  //       }
+  //     });
+  //   }
+  // }, [localToken]);
 
   return (
     <>
@@ -66,8 +87,18 @@ const Dashboard = () => {
           my todos
         </h1>
         <TodoForm todos={todoList} setTodos={setTodoList} user={user!} />
-        <TodoList key="ownTodos" todos={todoList} user={user!}/>
-        <TodoList key="orgTodos" todos={orgTodoList} user={user!}/>
+        <TodoList
+          key="ownTodos"
+          todos={todoList}
+          user={user!}
+          setTodos={setTodoList}
+        />
+        <TodoList
+          key="orgTodos"
+          todos={orgTodoList}
+          user={user!}
+          setTodos={setTodoList}
+        />
       </div>
     </>
   );

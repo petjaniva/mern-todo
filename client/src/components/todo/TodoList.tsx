@@ -16,15 +16,22 @@ export interface Todo {
 interface TodoListProps {
   todos: Todo[];
   user: IUser;
+  setTodos: React.Dispatch<React.SetStateAction<Todo[]>>;
 }
 
-const TodoList = ({ todos, user }: TodoListProps) => {
+const TodoList = ({ todos, user, setTodos }: TodoListProps) => {
   const token = localStorage.getItem("token");
   return (
-    
     <div>
       {todos.map((todo) => (
-        <SingleTodo key={todo._id!.toString()} todo={todo} token={(token ? token : "")} user={user} />
+        <SingleTodo
+          key={todo._id!.toString()}
+          todo={todo}
+          token={token ? token : ""}
+          user={user}
+          todos={todos}
+          setTodos={setTodos}
+        />
       ))}
     </div>
   );
