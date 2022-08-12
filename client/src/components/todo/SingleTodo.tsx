@@ -10,7 +10,7 @@ interface ITodoProps {
   token: string;
   user: IUser;
   todos: Todo[];
-  setTodos: React.Dispatch<React.SetStateAction<Todo[]>>;
+  // setTodos: React.Dispatch<React.SetStateAction<Todo[]>>;
 }
 
 const SingleTodo: React.FC<ITodoProps> = (props: ITodoProps) => {
@@ -28,12 +28,12 @@ const SingleTodo: React.FC<ITodoProps> = (props: ITodoProps) => {
 
   const onDoneClick = (clickedTodo: Todo) => {
     clickedTodo.isCompleted = !clickedTodo.isCompleted;
-    setTodo(clickedTodo);
+    //setTodo(clickedTodo);
     axios.put(`/todo/${todo._id}`, todo, { headers: { token: token } });
   };
   const onDeleteClick = (clickedTodo: Todo) => {
     axios.delete(`/todo/${clickedTodo._id}`, { headers: { token: token } });
-    props.setTodos(props.todos.filter((todo) => todo._id !== clickedTodo._id));
+    //props.setTodos(props.todos.filter((todo) => todo._id !== clickedTodo._id));
   };
   //function to update the todo when user starts working on it
   const onWorkingOnClick = (clickedTodo: Todo, user: IUser) => {
@@ -43,7 +43,7 @@ const SingleTodo: React.FC<ITodoProps> = (props: ITodoProps) => {
     } else {
       clickedTodo.workedOnBy = null;
     }
-    setTodo(clickedTodo);
+    //setTodo(clickedTodo);
     axios.put(`/todo/${clickedTodo._id}`, clickedTodo, {
       headers: { token: token },
     });

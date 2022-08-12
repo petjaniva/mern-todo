@@ -11,6 +11,19 @@ const Dashboard = () => {
   const [orgTodoList, setOrgTodoList] = React.useState<Todo[]>([]);
   const [user, setUser] = React.useState<IUser>();
 
+  const getTodos = () => {
+    console.log("getTodos");
+    if (localToken) {
+      axios.get("/todo", { headers: { token: localToken } }).then((res) => {
+        if (res.status === 200) {
+          setTodoList(res.data.todos);
+          setOrgTodoList(res.data.orgTodos);
+        }
+      });
+    }
+  };
+
+  //getTodos();
   // useEffect(() => {
   //   const source = new EventSource(`/events`);
 
@@ -43,30 +56,17 @@ const Dashboard = () => {
   // }
   //   })
 
-  setInterval(() => {
-    eventGetTodos();
-  }, 30000);
-
-  const eventGetTodos = () => {
-    if (localToken) {
-      axios.get("/todo", { headers: { token: localToken } }).then((res) => {
-        if (res.status === 200) {
-          setTodoList(res.data.todos);
-          setOrgTodoList(res.data.orgTodos);
-        }
-      });
-    }
-  };
+  // setInterval(() => {
+  //   getTodos();
+  // }, 30000);
 
   // eventSource.addEventListener('update', eventGetTodos);
 
-  React.useEffect(() => {
-    if (localToken) {
-      axios.get("/user", { headers: { token: localToken } }).then((res) => {
-        setUser(res.data.user);
-      });
-    }
-  }, [localToken]);
+  if (localToken) {
+    axios.get("/user", { headers: { token: localToken } }).then((res) => {
+      setUser(res.data.user);
+    });
+  }
 
   // React.useEffect(() => {
   //   if (localToken) {
@@ -86,19 +86,9 @@ const Dashboard = () => {
         <h1 className="font-bold text-green-400 text-center text-xl">
           my todos
         </h1>
-        <TodoForm todos={todoList} setTodos={setTodoList} user={user!} />
-        <TodoList
-          key="ownTodos"
-          todos={todoList}
-          user={user!}
-          setTodos={setTodoList}
-        />
-        <TodoList
-          key="orgTodos"
-          todos={orgTodoList}
-          user={user!}
-          setTodos={setTodoList}
-        />
+        <TodoForm todos={todoList} user={user!} setTodos={setTodoList} />
+        <TodoList key="ownTodos" todos={todoList} user={user!} />
+        <TodoList key="orgTodos" todos={orgTodoList} user={user!} />
       </div>
     </>
   );
