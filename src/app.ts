@@ -21,14 +21,13 @@ const MONGODB_URI =
 // mongoose.connect(MONGODB_URI).then(()=> run().catch(console.dir));
 mongoose.connect(MONGODB_URI);
 
-
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 const writeEvent = (res: Response, data: string) => {
   res.write(`data: ${data}\n\n`);
-}
+};
 
 const sendEvent = (req: Request, res: Response) => {
   res.writeHead(200, {
@@ -37,7 +36,7 @@ const sendEvent = (req: Request, res: Response) => {
     "Content-Type": "text/event-stream",
   });
   writeEvent(res, "update");
-}
+};
 
 app.get("/events", (req: Request, res: Response) => {
   sendEvent(req, res);
@@ -131,7 +130,7 @@ app.get("/user", (req: Request, res: Response) => {
       User.findOne({ _id: decoded.userId }, (err: Error, user: any) => {
         if (err) return console.log(err);
         return res.status(200).json({
-          title: "success",
+          title: "user found",
           user: decoded,
         });
       });
@@ -157,8 +156,7 @@ app.get("/user/:id", (req: Request, res: Response) => {
       });
     });
   }
-})
-
+});
 
 app.get("/todo", (req: Request, res: Response) => {
   let token = req.headers.token;
@@ -303,7 +301,6 @@ app.listen(port, (err?: Error) => {
   console.log("server running on port: ", port);
 });
 
-
 // let clients: Array<any> = [];
 
 // async function run() {
@@ -316,7 +313,7 @@ app.listen(port, (err?: Error) => {
 //     clients.forEach(client => client.res.write('update'))
 //     console.log("change", next);
 //   }});
-// } 
+// }
 
 // const eventsHandler = (req: Request, res: Response, next: any) => {
 //   const headers = {
@@ -335,6 +332,5 @@ app.listen(port, (err?: Error) => {
 // }
 
 // app.get("/events", eventsHandler);
-
 
 export default app;
