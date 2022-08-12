@@ -36,26 +36,28 @@ const Dashboard = () => {
     }
   };
 
+  React.useEffect(() => {
+    if (localToken) {
+      axios
+        .get("/user", { headers: { token: localToken } })
+        .then((res) => {
+          if (res.status === 200) {
+            setUser(res.data.user);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  }, [localToken]);
+
   // eventSource.addEventListener('update', eventGetTodos);
 
   React.useEffect(() => {
     if (localToken) {
-      axios.get("/user", { headers: { token: localToken } }).then((res) => {
-        setUser(res.data.user);
-      });
+      getTodos();
     }
-  }, [localToken]);
-
-  React.useEffect(() => {
-    if (localToken) {
-      axios.get("/todo", { headers: { token: localToken } }).then((res) => {
-        if (res.status === 200) {
-          setTodoList(res.data.todos);
-          setOrgTodoList(res.data.orgTodos);
-        }
-      });
-    }
-  }, [localToken]);
+  }, [localToken, getTodos]);
 
   return (
     <>
