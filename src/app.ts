@@ -262,19 +262,21 @@ app.post("/todo", (req: Request, res: Response) => {
       return res.status(401).json({
         title: "not authorized",
       });
-    let newTodo = new Todo({
-      title: req.body.title,
-      isCompleted: false,
-      author: decoded.userId,
-      date: new Date(),
-    });
-    const savedTodo: ITodo = await newTodo.save();
     const user: IUser | null = await User.findById(decoded.userId);
     if (!user) {
       return res.status(404).json({
         title: "user not found",
       });
     }
+    let newTodo = new Todo({
+      title: req.body.title,
+      isCompleted: false,
+      author: decoded.userId,
+      authorEmail: user.email,
+      date: new Date(),
+    });
+    const savedTodo: ITodo = await newTodo.save();
+
     if (!req.body.org) {
       user.todos.concat(savedTodo._id!);
     } else {

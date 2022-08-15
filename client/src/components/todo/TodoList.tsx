@@ -9,6 +9,7 @@ export interface Todo {
   _id: Types.ObjectId;
   date: Date;
   author: Types.ObjectId;
+  authorEmail: string;
   isWorkedOn?: boolean;
   workedOnBy?: Types.ObjectId | null;
 }
@@ -21,10 +22,14 @@ interface TodoListProps {
 const TodoList = ({ todos, user }: TodoListProps) => {
   const token = localStorage.getItem("token");
   return (
-    
     <div>
       {todos.map((todo) => (
-        <SingleTodo key={todo._id!.toString()} todo={todo} token={(token ? token : "")} user={user} />
+        <SingleTodo
+          key={todo._id.toString()}
+          todo={todo}
+          token={token ? token : ""}
+          user={user}
+        />
       ))}
     </div>
   );

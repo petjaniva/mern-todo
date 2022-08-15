@@ -24,17 +24,29 @@ const Dashboard = () => {
   // }
   //   })
 
-  const getTodos = () => {
+  const getTodos = React.useCallback(() => {
     if (localToken) {
-      axios.get("/todo", { headers: { token: localToken } }).then((res) => {
-        console.log("event");
-        if (res.status === 200) {
-          setTodoList(res.data.todos);
-          setOrgTodoList(res.data.orgTodos);
-        }
-      });
+      axios
+        .get("/todo", { headers: { token: localToken as string } })
+        .then((res) => {
+          if (res.status === 200) {
+            setTodoList(res.data.todos);
+            setOrgTodoList(res.data.orgTodos);
+          }
+        });
     }
-  };
+  }, [localToken]);
+
+  //   React.useCallback(()  => {if (localToken) {
+  //     axios.get("/todo", { headers: { token: localToken } }).then((res) => {
+  //       console.log("event");
+  //       if (res.status === 200) {
+  //         setTodoList(res.data.todos);
+  //         setOrgTodoList(res.data.orgTodos);
+  //       }
+  //     };
+  //   } , [localToken]);
+  // };
 
   React.useEffect(() => {
     if (localToken) {
@@ -68,6 +80,9 @@ const Dashboard = () => {
         </h1>
         <TodoForm todos={todoList} setTodos={setTodoList} user={user!} />
         <TodoList key="ownTodos" todos={todoList} user={user!} />
+        <h1 className="font-bold text-green-400 text-center text-xl">
+          org todos
+        </h1>
         <TodoList key="orgTodos" todos={orgTodoList} user={user!} />
       </div>
     </>
