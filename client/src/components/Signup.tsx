@@ -1,5 +1,6 @@
 import React from "react";
 import axios from "axios";
+import CreateOrg from "./CreateOrg";
 
 interface SigninProps {
   renderLogin: () => void;
@@ -11,19 +12,31 @@ const Signup = ({ renderLogin }: SigninProps) => {
   const [confirmPassword, setConfirmPassword] = React.useState("");
   const [disabled, setDisabled] = React.useState(true);
   const [orgCode, setOrgCode] = React.useState("");
+  const [isCreateOrg, setIsCreateOrg] = React.useState(false);
+  const [orgName, setOrgName] = React.useState("");
 
-  const onSubmit = () => {
-    if (password.length >= 6) {
-      axios
-        .post("/signup", {
+  const onSubmit = async () => {
+    if (orgName) {
+      await axios
+        .post("/org", {
+          name: orgName,
+          code: orgCode,
+        })
+        .then((res) => {
+          if (res.status === 200) {
+            setOrgName("");
+          }
+        });
+      if (password.length >= 6) {
+        await axios.post("/signup", {
           email: username,
           password: password,
           orgCode: orgCode,
-        })
+        });
         renderLogin();
-    }
-    else {
+      } else {
         window.alert("password must be at least 6 characters");
+      }
     }
   };
 
@@ -63,13 +76,20 @@ const Signup = ({ renderLogin }: SigninProps) => {
           />
         </div>
         <div className="mb-4">
-          <label>Organization code</label>
+          <label>Org code </label>
           <input
             onChange={(e) => setOrgCode(e.target.value)}
             className="w-full px-3 py-2 border border-gray-400 rounded-md"
             type="text"
             placeholder="Organization code"
           />
+          <span
+            onClick={() => setIsCreateOrg(!isCreateOrg)}
+            className="text-green-400 cursor-pointer"
+          >
+            Create an org?
+          </span>
+          <div>{isCreateOrg && <CreateOrg setOrgName={setOrgName} />}</div>
         </div>
         <div className="flex justify-between items-centered">
           <div>

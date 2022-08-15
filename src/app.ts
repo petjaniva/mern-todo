@@ -92,7 +92,7 @@ app.post("/login", (req: Request, res: Response) => {
         error: "invalid email or password",
       });
     }
-    let token = jwt.sign({ userId: user._id }, "secretkey");
+    let token = jwt.sign({ userId: user._id, org: user.org }, "secretkey");
     return res.status(200).json({
       title: "login succesful",
       token: token,
@@ -245,6 +245,7 @@ app.post("/todo", (req: Request, res: Response) => {
       return res.status(401).json({
         title: "not authorized",
       });
+    console.log(decoded);
     const user: IUser | null = await User.findById(decoded.userId);
     if (!user) {
       return res.status(404).json({
@@ -285,37 +286,5 @@ app.listen(port, (err?: Error) => {
   if (err) return console.log(err);
   console.log("server running on port: ", port);
 });
-
-// let clients: Array<any> = [];
-
-// async function run() {
-//   const mongoClient = await mongoose.connection.getClient();
-//   const db = mongoClient.db();
-//   let changeStream;
-//   const collection = await db.collection("todos");
-//   changeStream = await collection.watch();
-//   changeStream.on("change", (next) => {{
-//     clients.forEach(client => client.res.write('update'))
-//     console.log("change", next);
-//   }});
-// }
-
-// const eventsHandler = (req: Request, res: Response, next: any) => {
-//   const headers = {
-//     'Content-Type': 'text/event-stream',
-//     'Connection': 'keep-alive',
-//     'Cache-Control': 'no-cache'
-//   };
-//   res.writeHead(200, headers);
-//   const clientId = Date.now();
-//   const newClient = {
-//     id: clientId,
-//     res
-//   };
-//   console.log(newClient.id.toString());
-//   clients.push(newClient);
-// }
-
-// app.get("/events", eventsHandler);
 
 export default app;
