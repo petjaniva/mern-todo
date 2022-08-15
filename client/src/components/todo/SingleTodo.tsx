@@ -14,6 +14,7 @@ interface ITodoProps {
 const SingleTodo: React.FC<ITodoProps> = (props: ITodoProps) => {
   const token = props.token;
   const date = new Date(props.todo.date);
+  const [todo, setTodo] = React.useState(props.todo);
   const dateOptions: Intl.DateTimeFormatOptions = {
     weekday: "long",
     year: "numeric",
@@ -23,12 +24,14 @@ const SingleTodo: React.FC<ITodoProps> = (props: ITodoProps) => {
     minute: "numeric",
   };
 
-  const onDoneClick = (todo: Todo) => {
-    todo.isCompleted = !todo.isCompleted;
+  const onDoneClick = (clickedTodo: Todo) => {
+    clickedTodo.isCompleted = !clickedTodo.isCompleted;
+    //setTodo(clickedTodo);
     axios.put(`/todo/${todo._id}`, todo, { headers: { token: token } });
   };
-  const onDeleteClick = (todo: Todo) => {
-    axios.delete(`/todo/${todo._id}`, { headers: { token: token } });
+  const onDeleteClick = (clickedTodo: Todo) => {
+    axios.delete(`/todo/${clickedTodo._id}`, { headers: { token: token } });
+    //props.setTodos(props.todos.filter((todo) => todo._id !== clickedTodo._id));
   };
   //function to update the todo when user starts working on it
   const onWorkingOnClick = (todo: Todo, user: IUser) => {
@@ -41,17 +44,21 @@ const SingleTodo: React.FC<ITodoProps> = (props: ITodoProps) => {
     axios.put(`/todo/${todo._id}`, todo, { headers: { token: token } });
   };
   //function that returns users email as string if user is found from api
-  // const getUserEmail = async (userId: Types.ObjectId): Promise<string> => {
-  //   let user: IUser | undefined;
-  //   let response = await axios.get(`/user/${userId}`, {
-  //     headers: { token: token },
-  //   });
-  //   user = await response.data.user;
-  //   if (user) {
-  //     return user.email;
-  //   }
-  //   return "";
-  // };
+  const getUserEmail = (userId: Types.ObjectId): string => {
+    let user: IUser | undefined;
+    axios
+      .get(`/user/${userId}`, { headers: { token: token } })
+      .then((res) => {
+        user = res.data.user;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    if (user) {
+      return user.email;
+    }
+    return "";
+  };
   //   const getAuthorEmail = (authorId: Types.ObjectId): Promise<string> => {
   //     const promise = axios.get(`/user/${authorId}`, {
   //       headers: { token: token },
@@ -63,11 +70,6 @@ const SingleTodo: React.FC<ITodoProps> = (props: ITodoProps) => {
   //       }})
   //       return (promise.then((res) => { return res; }).catch((err) => { return err; }));
   // }
-  // let userEmail;
-  // getUserEmail(props.todo.author).then((result) => {
-  //   console.log(result);
-  //   userEmail = result;
-  // });
   return (
     <div
       className="border border-grey-400 p-4 rounded-md flex items-center justify-end"
