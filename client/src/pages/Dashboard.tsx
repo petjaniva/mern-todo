@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Navbar from "../components/Navbar";
 import axios from "axios";
 import TodoForm from "../components/todo/TodoForm";
@@ -10,20 +10,6 @@ const Dashboard = () => {
   const [todoList, setTodoList] = React.useState<Todo[]>([]);
   const [orgTodoList, setOrgTodoList] = React.useState<Todo[]>([]);
   const [user, setUser] = React.useState<IUser>();
-
-<<<<<<< HEAD
-  //   React.useEffect(() => {
-  //     const eventSource = new EventSource("/events");
-  //     eventSource.onmessage = () => {
-  //       axios.get("/todo", { headers: { token: localToken as string } }).then((res) => {
-  //         console.log("event");
-  //         if (res.status === 200) {
-  //          setTodoList(res.data.todos);
-  //            setOrgTodoList(res.data.orgTodos);
-  //     }
-  //   })
-  // }
-  //   })
 
   const getTodos = React.useCallback(() => {
     if (localToken) {
@@ -37,17 +23,6 @@ const Dashboard = () => {
         });
     }
   }, [localToken]);
-
-  //   React.useCallback(()  => {if (localToken) {
-  //     axios.get("/todo", { headers: { token: localToken } }).then((res) => {
-  //       console.log("event");
-  //       if (res.status === 200) {
-  //         setTodoList(res.data.todos);
-  //         setOrgTodoList(res.data.orgTodos);
-  //       }
-  //     };
-  //   } , [localToken]);
-  // };
 
   React.useEffect(() => {
     if (localToken) {
@@ -67,17 +42,10 @@ const Dashboard = () => {
   // eventSource.addEventListener('update', eventGetTodos);
 
   React.useEffect(() => {
-=======
-  const getTodos = () => {
-    console.log("getTodos");
->>>>>>> 910d41c41a243c977c46576bea8ba925367fb063
     if (localToken) {
       getTodos();
     }
-<<<<<<< HEAD
   }, [localToken, getTodos]);
-=======
-  };
 
   //getTodos();
   // useEffect(() => {
@@ -134,8 +102,6 @@ const Dashboard = () => {
   //     });
   //   }
   // }, [localToken]);
->>>>>>> 910d41c41a243c977c46576bea8ba925367fb063
-
   return (
     <>
       <Navbar />
@@ -143,16 +109,11 @@ const Dashboard = () => {
         <h1 className="font-bold text-green-400 text-center text-xl">
           my todos
         </h1>
-<<<<<<< HEAD
         <TodoForm todos={todoList} setTodos={setTodoList} user={user!} />
         <TodoList key="ownTodos" todos={todoList} user={user!} />
         <h1 className="font-bold text-green-400 text-center text-xl">
           org todos
         </h1>
-=======
-        <TodoForm todos={todoList} user={user!} setTodos={setTodoList} />
-        <TodoList key="ownTodos" todos={todoList} user={user!} />
->>>>>>> 910d41c41a243c977c46576bea8ba925367fb063
         <TodoList key="orgTodos" todos={orgTodoList} user={user!} />
       </div>
     </>

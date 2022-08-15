@@ -68,11 +68,13 @@ describe("user-tests", () => {
     title: "test todo",
     isCompleted: false,
     author: userId,
+    authorEmail: newUser.email,
   };
   const anotherTodo: ITodo = {
     title: "test2 todo",
     isCompleted: false,
     author: userId,
+    authorEmail: newUser.email,
   };
   describe("todo tests", () => {
     it("posting a todo works", async () => {
