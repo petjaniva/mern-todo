@@ -22,7 +22,7 @@ export const todoSchema = new Schema<ITodo>({
   authorEmail: String,
   date: Date,
   org: { type: Schema.Types.ObjectId, ref: "Org", default: null },
-  isWorkedOn: Boolean,
+  isWorkedOn: { type: Boolean, default: false },
   workedOnBy: { type: Schema.Types.ObjectId, ref: "User", default: null },
 });
 
