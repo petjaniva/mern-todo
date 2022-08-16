@@ -59,7 +59,7 @@ const Login = ({ renderSignup }: LoginProps) => {
       <div className="flex justify-between items-centered">
         <div>
           <p>
-            No Account?
+            No Account?&nbsp;
             <span
               onClick={renderSignup}
               className="text-green-400 cursor-pointer"

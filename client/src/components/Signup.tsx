@@ -13,30 +13,17 @@ const Signup = ({ renderLogin }: SigninProps) => {
   const [disabled, setDisabled] = React.useState(true);
   const [orgCode, setOrgCode] = React.useState("");
   const [isCreateOrg, setIsCreateOrg] = React.useState(false);
-  const [orgName, setOrgName] = React.useState("");
 
   const onSubmit = async () => {
-    if (orgName) {
-      await axios
-        .post("/org", {
-          name: orgName,
-          code: orgCode,
-        })
-        .then((res) => {
-          if (res.status === 200) {
-            setOrgName("");
-          }
-        });
-      if (password.length >= 6) {
-        await axios.post("/signup", {
-          email: username,
-          password: password,
-          orgCode: orgCode,
-        });
-        renderLogin();
-      } else {
-        window.alert("password must be at least 6 characters");
-      }
+    if (password.length >= 6) {
+      await axios.post("/signup", {
+        email: username,
+        password: password,
+        orgCode: orgCode,
+      });
+      renderLogin();
+    } else {
+      window.alert("password must be at least 6 characters");
     }
   };
 
@@ -89,12 +76,16 @@ const Signup = ({ renderLogin }: SigninProps) => {
           >
             Create an org?
           </span>
-          <div>{isCreateOrg && <CreateOrg setOrgName={setOrgName} />}</div>
+          <div>
+            {isCreateOrg && (
+              <CreateOrg orgCode={orgCode} setIsCreateOrg={setIsCreateOrg} />
+            )}
+          </div>
         </div>
         <div className="flex justify-between items-centered">
           <div>
             <p>
-              Already a member?
+              Already a member?&nbsp;
               <span
                 onClick={renderLogin}
                 className="text-green-400 cursor-pointer"

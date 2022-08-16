@@ -55,13 +55,16 @@ app.post("/signup", (req: Request, res: Response) => {
 });
 
 app.post("/org", (req: Request, res: Response) => {
+  console.log(req.body);
   const newOrg = new Org({
     name: req.body.name,
     code: req.body.code,
     members: [],
+    todos: [],
   });
   newOrg.save((err) => {
     if (err) {
+      console.log(err);
       return res.status(400).json({
         title: "error",
         error: err,
@@ -93,6 +96,7 @@ app.post("/login", (req: Request, res: Response) => {
       });
     }
     let token = jwt.sign({ userId: user._id, org: user.org }, "secretkey");
+    console.log(user);
     return res.status(200).json({
       title: "login succesful",
       token: token,

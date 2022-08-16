@@ -1,8 +1,29 @@
-interface createOrgProps {
-  setOrgName: (name: string) => void;
+import React from "react";
+import axios from "axios";
+
+interface orgProps {
+  orgCode: string;
+  setIsCreateOrg: (value: boolean) => void;
 }
 
-const CreateOrg = ({ setOrgName }: createOrgProps) => {
+const CreateOrg = ({ orgCode, setIsCreateOrg }: orgProps) => {
+  const [orgName, setOrgName] = React.useState("");
+
+  const onSubmit = async () => {
+    if (orgName) {
+      await axios
+        .post("/org", {
+          name: orgName,
+          code: orgCode,
+        })
+        .then((res) => {
+          if (res.status === 200) {
+            setOrgName("");
+            setIsCreateOrg(false);
+          }
+        });
+    }
+  };
   return (
     <div>
       <div className="mb-4">
@@ -14,6 +35,12 @@ const CreateOrg = ({ setOrgName }: createOrgProps) => {
           placeholder="org name"
         />
       </div>
+      <button
+        className="rounded-lg px-6 py-2 font-bold bg-green-400 text-white"
+        onClick={onSubmit}
+      >
+        Create
+      </button>
     </div>
   );
 };
