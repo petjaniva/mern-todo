@@ -7,7 +7,8 @@ export interface IOrg {
   code: string;
   members: Types.ObjectId[];
   todos: Types.ObjectId[];
-};
+  _id?: Types.ObjectId;
+}
 
 const orgSchema = new Schema<IOrg>({
   name: {

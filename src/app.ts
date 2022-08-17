@@ -26,16 +26,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 app.post("/signup", (req: Request, res: Response) => {
-  let userOrg: IOrg | null = null;
-  if (req.body.orgCode) {
-    Org.findOne({ code: req.body.orgCode }, (err: Error, foundOrg: IOrg) => {
-      userOrg = foundOrg;
-    });
-  }
+  let userOrg;
   const newUser = new User({
     email: req.body.email,
     password: bcrypt.hashSync(req.body.password, 10),
-    org: userOrg,
   });
   newUser.save((err) => {
     if (err) {
@@ -44,8 +38,22 @@ app.post("/signup", (req: Request, res: Response) => {
         error: "Email already in use",
       });
     }
-    if (userOrg) {
-      userOrg.members.push(newUser._id);
+    if (req.body.orgCode) {
+      const promise = Org.findOne({ code: req.body.orgCode }).exec();
+      promise
+        .then((org) => {
+          if (org) {
+            userOrg = org;
+            newUser.org = userOrg._id;
+            newUser.save();
+            userOrg.members.push(newUser._id);
+            userOrg.save();
+            console.log(newUser);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     }
     return res.status(200).json({
       title: "user succesfully added",

@@ -39,69 +39,12 @@ const Dashboard = () => {
     }
   }, [localToken]);
 
-  // eventSource.addEventListener('update', eventGetTodos);
-
   React.useEffect(() => {
     if (localToken) {
       getTodos();
     }
   }, [localToken, getTodos]);
 
-  //getTodos();
-  // useEffect(() => {
-  //   const source = new EventSource(`/events`);
-
-  //   source.addEventListener("open", () => {
-  //     console.log("SSE opened!");
-  //   });
-
-  //   source.addEventListener("message", (e) => {
-  //     console.log("message");
-  //   });
-
-  //   source.addEventListener("error", (e) => {
-  //     console.error("Error: ", e);
-  //   });
-
-  //   return () => {
-  //     source.close();
-  //   };
-  // }, []);
-  //   React.useEffect(() => {
-  //     const eventSource = new EventSource("/events");
-  //     eventSource.onmessage = () => {
-  //       axios.get("/todo", { headers: { token: localToken as string } }).then((res) => {
-  //         console.log("event");
-  //         if (res.status === 200) {
-  //          setTodoList(res.data.todos);
-  //            setOrgTodoList(res.data.orgTodos);
-  //     }
-  //   })
-  // }
-  //   })
-
-  // setInterval(() => {
-  //   getTodos();
-  // }, 30000);
-
-  // eventSource.addEventListener('update', eventGetTodos);
-
-  if (localToken) {
-    axios.get("/user", { headers: { token: localToken } }).then((res) => {
-      setUser(res.data.user);
-    });
-  }
-
-  // React.useEffect(() => {
-  //   if (localToken) {
-  //     axios.get("/todo", { headers: { token: localToken } }).then((res) => {
-  //       if (res.status === 200) {
-  //         setTodoList(res.data.todos);
-  //         setOrgTodoList(res.data.orgTodos);
-  //       }
-  //     });
-  //   }
-  // }, [localToken]);
   return (
     <>
       <Navbar />
