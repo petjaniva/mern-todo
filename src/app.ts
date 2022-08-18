@@ -2,6 +2,7 @@ import User, { IUser } from "./models/User";
 import { Request, Response } from "express";
 import Todo, { ITodo } from "./models/Todo";
 import Org, { IOrg } from "./models/Org";
+const { createServer } = require("http");
 import express from "express";
 import cors from "cors";
 import jwt from "jsonwebtoken";
@@ -9,6 +10,7 @@ import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import * as dotenv from "dotenv";
 import * as path from "path";
+import * as io from "socket.io";
 
 const app = express();
 dotenv.config({ path: path.resolve(__dirname, "../.env") });
@@ -18,12 +20,35 @@ const MONGODB_URI =
     ? process.env.TEST_MONGODB_URI!
     : process.env.MONGODB_URI!;
 
-mongoose.connect(MONGODB_URI);
+mongoose.connect(MONGODB_URI).then(() => run().catch(console.dir));
 // mongoose.connect(MONGODB_URI);
 
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+const httpServer = createServer(app);
+
+const ioServer = new io.Server(httpServer, {
+  cors: {
+    origin: ["http://localhost:3000"],
+  },
+});
+
+ioServer.on("connection", (socket) => {
+  console.log("a user connected", Date.now().toLocaleString());
+});
+
+async function run() {
+  const mongoClient = await mongoose.connection.getClient();
+  const db = mongoClient.db();
+  let changeStream;
+  const collection = await db.collection("todos");
+  changeStream = await collection.watch();
+  changeStream.on("change", (next) => {
+    console.log("change", next);
+    ioServer.emit("update");
+  });
+}
 
 app.post("/signup", (req: Request, res: Response) => {
   let userOrg;
@@ -164,10 +189,11 @@ app.get("/todo", (req: Request, res: Response) => {
   jwt.verify(token, "secretkey", (err: Error | null, decoded: any) => {
     let orgTodos: ITodo[] = [];
     if (decoded.org) {
-      decoded.org.todos.map((todoId: mongoose.Types.ObjectId) => {
-        Todo.findOne({ _id: todoId }, (err: Error, todo: ITodo) => {
-          orgTodos.push(todo);
-        });
+      Org.findOne({ _id: decoded.org }, (err: Error, org: any) => {
+        if (org) {
+          orgTodos = org.todos;
+        }
+        if (err) return console.log(err);
       });
     }
     if (err)
@@ -294,7 +320,7 @@ app.post("/todo", (req: Request, res: Response) => {
 
 const port = process.env.PORT || 5000;
 
-app.listen(port, (err?: Error) => {
+httpServer.listen(port, (err?: Error) => {
   if (err) return console.log(err);
   console.log("server running on port: ", port);
 });
