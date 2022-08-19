@@ -4,38 +4,66 @@ import axios from "axios";
 import TodoForm from "../components/todo/TodoForm";
 import TodoList, { Todo } from "../components/todo/TodoList";
 import { IUser } from "../../../src/models/User";
-import { io } from "socket.io-client";
+import { Socket, io } from "socket.io-client";
+
+interface getTodosResponse {
+  todos: Todo[];
+  orgTodos: Todo[];
+}
+const localToken = localStorage.getItem("token");
+const getTodos = (token: string): Promise<getTodosResponse> => {
+  const promise = axios.get("/todo", { headers: { token: token } });
+  const object = promise.then((response) => {
+    return { todos: response.data.todos, orgTodos: response.data.orgTodos };
+  });
+  return object;
+};
 
 const Dashboard = () => {
-  const [localToken, setLocaltoken] = React.useState<string>("");
+  // const [localToken, setLocaltoken] = React.useState<string>("");
   const [todoList, setTodoList] = React.useState<Todo[]>([]);
   const [orgTodoList, setOrgTodoList] = React.useState<Todo[]>([]);
   const [user, setUser] = React.useState<IUser>();
-  const socket = io();
+  const [socket, setSocket] = React.useState<Socket | null>(null);
 
   React.useEffect(() => {
-    setLocaltoken(localStorage.getItem("token")!);
+    setSocket(io());
   }, []);
-  const getTodos = React.useCallback(() => {
-    if (localToken) {
-      axios
-        .get("/todo", { headers: { token: localToken as string } })
-        .then((res) => {
-          if (res.status === 200) {
-            setTodoList(res.data.todos);
-            setOrgTodoList(res.data.orgTodos);
-          }
+  console.log("token", localToken);
+  // React.useEffect(() => {
+  //   setLocaltoken(localStorage.getItem("token")!);
+  // }, []);
+
+  //move this out of the Dashboard component and take lokaToken as a prop return object with two arrays of todos and orgTodos
+  // const getTodos = React.useCallback(() => {
+  //   if (localToken) {
+  //     axios
+  //       .get("/todo", { headers: { token: localToken as string } })
+  //       .then((res) => {
+  //         if (res.status === 200) {
+  //           setTodoList(res.data.todos);
+  //           setOrgTodoList(res.data.orgTodos);
+  //         }
+  //       });
+  //   }
+  // }, []);
+
+  //look more into websockets and react
+  React.useEffect(() => {
+    if (socket) {
+      socket.on("connect", () => {
+        console.log("connected");
+      });
+      socket.on("update", () => {
+        getTodos(localToken!).then((res) => {
+          setTodoList(res.todos);
+          setOrgTodoList(res.orgTodos);
         });
-    }
-  }, [localToken]);
+      });
+    } else return;
+  }, [socket]);
 
-  React.useEffect(() => {
-    socket.on("connect", () => {
-      console.log("connected");
-    });
-    socket.on("update", getTodos);
-  }, []);
-
+  //does localtoken have userid and could we use it here?
   React.useEffect(() => {
     if (localToken) {
       axios
@@ -49,13 +77,7 @@ const Dashboard = () => {
           console.log(err);
         });
     }
-  }, [localToken]);
-
-  React.useEffect(() => {
-    if (localToken) {
-      getTodos();
-    }
-  }, [localToken, getTodos]);
+  }, []);
 
   return (
     <React.Profiler
