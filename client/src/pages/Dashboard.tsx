@@ -11,7 +11,9 @@ interface getTodosResponse {
   orgTodos: Todo[];
 }
 const localToken = localStorage.getItem("token");
+
 const getTodos = (token: string): Promise<getTodosResponse> => {
+  console.log("getTodos token", token);
   const promise = axios.get("/todo", { headers: { token: token } });
   const object = promise.then((response) => {
     return { todos: response.data.todos, orgTodos: response.data.orgTodos };
@@ -28,8 +30,18 @@ const Dashboard = () => {
 
   React.useEffect(() => {
     setSocket(io());
+    if (localToken) {
+      getTodos(localToken)
+        .then((response) => {
+          setTodoList(response.todos);
+          setOrgTodoList(response.orgTodos);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
   }, []);
-  console.log("token", localToken);
+
   // React.useEffect(() => {
   //   setLocaltoken(localStorage.getItem("token")!);
   // }, []);
@@ -55,10 +67,13 @@ const Dashboard = () => {
         console.log("connected");
       });
       socket.on("update", () => {
-        getTodos(localToken!).then((res) => {
-          setTodoList(res.todos);
-          setOrgTodoList(res.orgTodos);
-        });
+        console.log("update");
+        if (localToken) {
+          getTodos(localToken).then((res) => {
+            setTodoList(res.todos);
+            setOrgTodoList(res.orgTodos);
+          });
+        }
       });
     } else return;
   }, [socket]);
@@ -83,7 +98,7 @@ const Dashboard = () => {
     <React.Profiler
       id="test1"
       onRender={(...args) => {
-        console.log(args);
+        //console.log(args);
       }}
     >
       <>

@@ -37,6 +37,7 @@ const SingleTodo: React.FC<ITodoProps> = (props: ITodoProps) => {
   //function to update the todo when user starts working on it
   const onWorkingOnClick = (todo: Todo, user: IUser) => {
     todo.isWorkedOn = !todo.isWorkedOn;
+    console.log("working on", todo);
     if (todo.isWorkedOn) {
       todo.workedOnBy = user._id;
     } else {

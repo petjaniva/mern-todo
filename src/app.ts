@@ -6,11 +6,16 @@ const { createServer } = require("http");
 import express from "express";
 import cors from "cors";
 import jwt from "jsonwebtoken";
-import mongoose from "mongoose";
+import mongoose, { Types } from "mongoose";
 import bcrypt from "bcrypt";
 import * as dotenv from "dotenv";
 import * as path from "path";
 import * as io from "socket.io";
+
+interface IToken {
+  userId: Types.ObjectId;
+  org: Types.ObjectId;
+}
 
 const app = express();
 dotenv.config({ path: path.resolve(__dirname, "../.env") });
@@ -45,7 +50,6 @@ async function run() {
   const collection = await db.collection("todos");
   changeStream = await collection.watch();
   changeStream.on("change", (next) => {
-    console.log("change", next);
     ioServer.emit("update");
   });
 }
@@ -180,6 +184,7 @@ app.get("/user/:id", (req: Request, res: Response) => {
 
 app.get("/todo", (req: Request, res: Response) => {
   let token = req.headers.token;
+  console.log("token", token);
   if (Array.isArray(token)) token = token[0];
   if (!token) {
     return res.status(401).json({
@@ -187,21 +192,24 @@ app.get("/todo", (req: Request, res: Response) => {
     });
   }
   jwt.verify(token, "secretkey", (err: Error | null, decoded: any) => {
-    let orgTodos: ITodo[] = [];
-    if (decoded.org) {
-      Org.findOne({ _id: decoded.org }, (err: Error, org: any) => {
-        if (org) {
-          orgTodos = org.todos;
-        }
-        if (err) return console.log(err);
-      });
-    }
     if (err)
       return res.status(401).json({
         title: "not authorized",
       });
+    let orgTodos: ITodo[] = [];
+    console.log("decoded: ", decoded.userId);
+
     Todo.find({ author: decoded.userId }, (err: Error, todos: ITodo[]) => {
       if (err) return console.log(err);
+      if (decoded.org) {
+        Org.findOne({ _id: decoded.org }, (err: Error, org: any) => {
+          if (org) {
+            orgTodos = org.todos;
+          }
+          if (err) return console.log(err);
+        });
+      }
+      console.log(orgTodos);
       return res.status(200).json({
         title: "success",
         todos: todos,
@@ -283,7 +291,6 @@ app.post("/todo", (req: Request, res: Response) => {
       return res.status(401).json({
         title: "not authorized",
       });
-    console.log(decoded);
     const user: IUser | null = await User.findById(decoded.userId);
     if (!user) {
       return res.status(404).json({
