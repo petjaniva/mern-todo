@@ -258,6 +258,8 @@ app.put("/todo/:todoId", (req: Request, res: Response) => {
       _id: req.body._id,
       date: req.body.date,
       org: req.body.org,
+      isWorkedOn: req.body.isWorkedOn,
+      WorkedOnBy: req.body.WorkedOnBy,
     };
     jwt.verify(token, "secretkey", async (err: Error | null, decoded: any) => {
       if (err) {
