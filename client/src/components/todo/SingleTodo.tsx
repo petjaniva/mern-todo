@@ -1,7 +1,11 @@
 import * as React from "react";
 import { Todo } from "./TodoList";
 import axios from "axios";
-import { AiFillDelete, AiFillCheckCircle } from "react-icons/ai";
+import {
+  AiFillDelete,
+  AiFillCheckCircle,
+  AiOutlineCheckCircle,
+} from "react-icons/ai";
 import { IUser } from "../../../../src/models/User";
 
 interface ITodoProps {
@@ -59,27 +63,28 @@ const SingleTodo: React.FC<ITodoProps> = (props: ITodoProps) => {
       key={props.todo._id!.toString()}
     >
       <div
-        className={props.todo.isCompleted ? "line-through mr-auto" : "mr-auto"}
+        className={props.todo.isCompleted ? "line-through mr-auto " : "mr-auto"}
       >
         {props.todo.title}{" "}
       </div>
       <input
         type="button"
-        className={
-          (props.todo.isWorkedOn ? "text-blue-400" : "text-white") +
-          "py-2 px-4 bg-green-400  rounded-md cursor-pointer"
-        }
+        className={"py-2 px-4 bg-green-400  rounded-md cursor-pointer"}
         value={props.todo.isCompleted ? "UNDONE" : "DONE"}
         onClick={() => onDoneClick(props.todo)}
       />
       <div className="px-2" />
-      <AiFillCheckCircle
-        className={
-          (props.todo.isWorkedOn ? "to-blue-900" : "") +
-          "w-6 h-6 cursor-pointer"
-        }
-        onClick={() => onWorkingOnClick(props.todo, props.user)}
-      />
+      {props.todo.isWorkedOn ? (
+        <AiFillCheckCircle
+          className="w-6 h-6 cursor-pointer"
+          onClick={() => onWorkingOnClick(props.todo, props.user)}
+        />
+      ) : (
+        <AiOutlineCheckCircle
+          className="w-6 h-6 cursor-pointer"
+          onClick={() => onWorkingOnClick(props.todo, props.user)}
+        />
+      )}
       <div className="px-2" />
       <AiFillDelete
         className="w-6 h-6 cursor-pointer"
