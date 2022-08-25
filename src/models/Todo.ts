@@ -10,7 +10,7 @@ export interface ITodo {
   date?: Date;
   org?: Types.ObjectId | null;
   isWorkedOn?: boolean;
-  workedOnBy?: Types.ObjectId | null;
+  workedOnBy?: string | null;
 }
 
 export const todoSchema = new Schema<ITodo>({

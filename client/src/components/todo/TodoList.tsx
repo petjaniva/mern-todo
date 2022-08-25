@@ -11,7 +11,7 @@ export interface Todo {
   author: Types.ObjectId;
   authorEmail: string;
   isWorkedOn?: boolean;
-  workedOnBy?: Types.ObjectId | null;
+  workedOnBy?: string | null;
 }
 
 interface TodoListProps {

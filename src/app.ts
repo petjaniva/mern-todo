@@ -171,8 +171,9 @@ app.get("/user/:id", (req: Request, res: Response) => {
         return res.status(401).json({
           title: "not authorized",
         });
-      User.findOne({ _id: req.params.id }, (err: Error, user: any) => {
+      User.findOne({ _id: req.params.id }, (err: Error, user: IUser) => {
         if (err) return console.log(err);
+        console.log(user);
         return res.status(200).json({
           title: "success",
           user: user,

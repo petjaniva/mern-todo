@@ -10,7 +10,7 @@ interface getTodosResponse {
   todos: Todo[];
   orgTodos: Todo[];
 }
-const localToken = localStorage.getItem("token");
+//const localToken = localStorage.getItem("token");
 
 const getTodos = (token: string): Promise<getTodosResponse> => {
   console.log("getTodos token", token);
@@ -22,7 +22,7 @@ const getTodos = (token: string): Promise<getTodosResponse> => {
 };
 
 const Dashboard = () => {
-  // const [localToken, setLocaltoken] = React.useState<string>("");
+  const [localToken, setLocaltoken] = React.useState<string>("");
   const [todoList, setTodoList] = React.useState<Todo[]>([]);
   const [orgTodoList, setOrgTodoList] = React.useState<Todo[]>([]);
   const [user, setUser] = React.useState<IUser>();
@@ -40,27 +40,12 @@ const Dashboard = () => {
           console.log(error);
         });
     }
-  }, []);
+  }, [localToken]);
 
-  // React.useEffect(() => {
-  //   setLocaltoken(localStorage.getItem("token")!);
-  // }, []);
+  React.useEffect(() => {
+    setLocaltoken(localStorage.getItem("token")!);
+  }, [localToken]);
 
-  //move this out of the Dashboard component and take lokaToken as a prop return object with two arrays of todos and orgTodos
-  // const getTodos = React.useCallback(() => {
-  //   if (localToken) {
-  //     axios
-  //       .get("/todo", { headers: { token: localToken as string } })
-  //       .then((res) => {
-  //         if (res.status === 200) {
-  //           setTodoList(res.data.todos);
-  //           setOrgTodoList(res.data.orgTodos);
-  //         }
-  //       });
-  //   }
-  // }, []);
-
-  //look more into websockets and react
   React.useEffect(() => {
     if (socket) {
       socket.on("connect", () => {
@@ -76,11 +61,12 @@ const Dashboard = () => {
         }
       });
     } else return;
-  }, [socket]);
+  }, [socket, localToken]);
 
   //does localtoken have userid and could we use it here?
   React.useEffect(() => {
     if (localToken) {
+      console.log("token found!");
       axios
         .get("/user", { headers: { token: localToken } })
         .then((res) => {
@@ -91,8 +77,8 @@ const Dashboard = () => {
         .catch((err) => {
           console.log(err);
         });
-    }
-  }, []);
+    } else console.log("no token");
+  }, [localToken]);
 
   return (
     <React.Profiler

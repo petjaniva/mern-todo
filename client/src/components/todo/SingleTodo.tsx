@@ -7,6 +7,7 @@ import {
   AiOutlineCheckCircle,
 } from "react-icons/ai";
 import { IUser } from "../../../../src/models/User";
+import { Types } from "mongoose";
 
 interface ITodoProps {
   todo: Todo;
@@ -17,7 +18,7 @@ interface ITodoProps {
 const SingleTodo: React.FC<ITodoProps> = (props: ITodoProps) => {
   const token = props.token;
   const date = new Date(props.todo.date);
-
+  // const [user, setUser] = React.useState<IUser>(props.user);
   const dateOptions: Intl.DateTimeFormatOptions = {
     weekday: "long",
     year: "numeric",
@@ -26,6 +27,14 @@ const SingleTodo: React.FC<ITodoProps> = (props: ITodoProps) => {
     hour: "numeric",
     minute: "numeric",
   };
+
+  // React.useEffect(() => {
+  //   axios
+  //     .get(`/user/${props.user._id}`, { headers: { token: token } })
+  //     .then((res) => {
+  //       setUser(res.data.user);
+  //     });
+  // }, [token]);
 
   const onDoneClick = (clickedTodo: Todo) => {
     clickedTodo.isCompleted = !clickedTodo.isCompleted;
@@ -39,27 +48,29 @@ const SingleTodo: React.FC<ITodoProps> = (props: ITodoProps) => {
     //props.setTodos(props.todos.filter((todo) => todo._id !== clickedTodo._id));
   };
   //function to update the todo when user starts working on it
-  const onWorkingOnClick = (todo: Todo, user: IUser) => {
+  const onWorkingOnClick = (todo: Todo) => {
     todo.isWorkedOn = !todo.isWorkedOn;
 
     if (todo.isWorkedOn) {
-      todo.workedOnBy = user._id;
+      todo.workedOnBy = "kisu";
     } else {
       todo.workedOnBy = null;
     }
-    console.log("working on", todo);
+    // console.log("working on", user);
     axios.put(`/todo/${todo._id}`, todo, { headers: { token: token } });
   };
 
+  //todo add isworkedonby
+  const titleString =
+    "date: " +
+    date.toLocaleDateString("fi-FI", dateOptions) +
+    " author: " +
+    props.todo.authorEmail +
+    (props.todo.isWorkedOn ? " worked on by: " + props.todo.workedOnBy : "");
   return (
     <div
       className="border border-grey-400 p-4 rounded-md flex items-center justify-end"
-      title={
-        "date: " +
-        date.toLocaleDateString("fi-FI", dateOptions) +
-        " author: " +
-        props.todo.authorEmail
-      }
+      title={titleString}
       key={props.todo._id!.toString()}
     >
       <div
@@ -75,14 +86,14 @@ const SingleTodo: React.FC<ITodoProps> = (props: ITodoProps) => {
       />
       <div className="px-2" />
       {props.todo.isWorkedOn ? (
-        <AiFillCheckCircle
-          className="w-6 h-6 cursor-pointer"
-          onClick={() => onWorkingOnClick(props.todo, props.user)}
-        />
-      ) : (
         <AiOutlineCheckCircle
           className="w-6 h-6 cursor-pointer"
-          onClick={() => onWorkingOnClick(props.todo, props.user)}
+          onClick={() => onWorkingOnClick(props.todo)}
+        />
+      ) : (
+        <AiFillCheckCircle
+          className="w-6 h-6 cursor-pointer"
+          onClick={() => onWorkingOnClick(props.todo)}
         />
       )}
       <div className="px-2" />
