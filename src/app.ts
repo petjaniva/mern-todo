@@ -13,7 +13,7 @@ import * as path from "path";
 import * as io from "socket.io";
 
 interface IToken {
-  userId: Types.ObjectId;
+  _id: Types.ObjectId;
   org: Types.ObjectId;
 }
 
@@ -40,7 +40,7 @@ const ioServer = new io.Server(httpServer, {
 });
 
 ioServer.on("connection", (socket) => {
-  console.log("a user connected", Date.now().toLocaleString());
+  console.log("a user connected");
 });
 
 async function run() {
@@ -77,7 +77,6 @@ app.post("/signup", (req: Request, res: Response) => {
             newUser.save();
             userOrg.members.push(newUser._id);
             userOrg.save();
-            console.log(newUser);
           }
         })
         .catch((err) => {
@@ -92,7 +91,6 @@ app.post("/signup", (req: Request, res: Response) => {
 });
 
 app.post("/org", (req: Request, res: Response) => {
-  console.log(req.body);
   const newOrg = new Org({
     name: req.body.name,
     code: req.body.code,
@@ -132,8 +130,7 @@ app.post("/login", (req: Request, res: Response) => {
         error: "invalid email or password",
       });
     }
-    let token = jwt.sign({ userId: user._id, org: user.org }, "secretkey");
-    console.log(user);
+    let token = jwt.sign({ _id: user._id, org: user.org }, "secretkey");
     return res.status(200).json({
       title: "login succesful",
       token: token,
@@ -151,11 +148,11 @@ app.get("/user", (req: Request, res: Response) => {
         return res.status(401).json({
           title: "not authorized",
         });
-      User.findOne({ _id: decoded.userId }, (err: Error, user: any) => {
+      User.findOne({ _id: decoded._id }, (err: Error, user: any) => {
         if (err) return console.log(err);
         return res.status(200).json({
           title: "user found",
-          user: decoded,
+          user: user,
         });
       });
     });
@@ -172,8 +169,7 @@ app.get("/user/:id", (req: Request, res: Response) => {
           title: "not authorized",
         });
       User.findOne({ _id: req.params.id }, (err: Error, user: IUser) => {
-        if (err) return console.log(err);
-        console.log(user);
+        if (err) return console.log("Error in get user", req.params.id);
         return res.status(200).json({
           title: "success",
           user: user,
@@ -185,7 +181,6 @@ app.get("/user/:id", (req: Request, res: Response) => {
 
 app.get("/todo", (req: Request, res: Response) => {
   let token = req.headers.token;
-  console.log("token", token);
   if (Array.isArray(token)) token = token[0];
   if (!token) {
     return res.status(401).json({
@@ -198,9 +193,8 @@ app.get("/todo", (req: Request, res: Response) => {
         title: "not authorized",
       });
     let orgTodos: ITodo[] = [];
-    console.log("decoded: ", decoded.userId);
 
-    Todo.find({ author: decoded.userId }, (err: Error, todos: ITodo[]) => {
+    Todo.find({ author: decoded._id }, (err: Error, todos: ITodo[]) => {
       if (err) return console.log(err);
       if (decoded.org) {
         Org.findOne({ _id: decoded.org }, (err: Error, org: any) => {
@@ -210,7 +204,6 @@ app.get("/todo", (req: Request, res: Response) => {
           if (err) return console.log(err);
         });
       }
-      console.log(orgTodos);
       return res.status(200).json({
         title: "success",
         todos: todos,
@@ -294,7 +287,7 @@ app.post("/todo", (req: Request, res: Response) => {
       return res.status(401).json({
         title: "not authorized",
       });
-    const user: IUser | null = await User.findById(decoded.userId);
+    const user: IUser | null = await User.findById(decoded._id);
     if (!user) {
       return res.status(404).json({
         title: "user not found",
@@ -303,7 +296,7 @@ app.post("/todo", (req: Request, res: Response) => {
     let newTodo = new Todo({
       title: req.body.title,
       isCompleted: false,
-      author: decoded.userId,
+      author: decoded._id,
       authorEmail: user.email,
       date: new Date(),
     });

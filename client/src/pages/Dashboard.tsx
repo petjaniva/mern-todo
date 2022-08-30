@@ -13,7 +13,6 @@ interface getTodosResponse {
 //const localToken = localStorage.getItem("token");
 
 const getTodos = (token: string): Promise<getTodosResponse> => {
-  console.log("getTodos token", token);
   const promise = axios.get("/todo", { headers: { token: token } });
   const object = promise.then((response) => {
     return { todos: response.data.todos, orgTodos: response.data.orgTodos };
@@ -47,18 +46,16 @@ const Dashboard = () => {
   }, [localToken]);
 
   React.useEffect(() => {
-    if (socket) {
+    if (socket && localToken) {
       socket.on("connect", () => {
         console.log("connected");
       });
       socket.on("update", () => {
         console.log("update");
-        if (localToken) {
-          getTodos(localToken).then((res) => {
-            setTodoList(res.todos);
-            setOrgTodoList(res.orgTodos);
-          });
-        }
+        getTodos(localToken).then((res) => {
+          setTodoList(res.todos);
+          setOrgTodoList(res.orgTodos);
+        });
       });
     } else return;
   }, [socket, localToken]);

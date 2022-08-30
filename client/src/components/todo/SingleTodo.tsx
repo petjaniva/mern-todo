@@ -7,7 +7,6 @@ import {
   AiOutlineCheckCircle,
 } from "react-icons/ai";
 import { IUser } from "../../../../src/models/User";
-import { Types } from "mongoose";
 
 interface ITodoProps {
   todo: Todo;
@@ -18,7 +17,7 @@ interface ITodoProps {
 const SingleTodo: React.FC<ITodoProps> = (props: ITodoProps) => {
   const token = props.token;
   const date = new Date(props.todo.date);
-  // const [user, setUser] = React.useState<IUser>(props.user);
+  const [user, setUser] = React.useState<IUser>(props.user);
   const dateOptions: Intl.DateTimeFormatOptions = {
     weekday: "long",
     year: "numeric",
@@ -28,13 +27,18 @@ const SingleTodo: React.FC<ITodoProps> = (props: ITodoProps) => {
     minute: "numeric",
   };
 
-  // React.useEffect(() => {
-  //   axios
-  //     .get(`/user/${props.user._id}`, { headers: { token: token } })
-  //     .then((res) => {
-  //       setUser(res.data.user);
-  //     });
-  // }, [token]);
+  React.useEffect(() => {
+    console.log("user", props.user);
+    axios
+      .get(`/user`, { headers: { token: token } })
+      .then((res) => {
+        console.log("getuser res", res);
+        setUser(res.data.user);
+      })
+      .catch((err) => {
+        console.log("getuser err", err);
+      });
+  }, [token]);
 
   const onDoneClick = (clickedTodo: Todo) => {
     clickedTodo.isCompleted = !clickedTodo.isCompleted;
@@ -50,13 +54,12 @@ const SingleTodo: React.FC<ITodoProps> = (props: ITodoProps) => {
   //function to update the todo when user starts working on it
   const onWorkingOnClick = (todo: Todo) => {
     todo.isWorkedOn = !todo.isWorkedOn;
-
     if (todo.isWorkedOn) {
-      todo.workedOnBy = "kisu";
+      todo.workedOnBy = user.email;
     } else {
       todo.workedOnBy = null;
     }
-    // console.log("working on", user);
+    console.log("working on", todo.workedOnBy);
     axios.put(`/todo/${todo._id}`, todo, { headers: { token: token } });
   };
 
@@ -67,6 +70,7 @@ const SingleTodo: React.FC<ITodoProps> = (props: ITodoProps) => {
     " author: " +
     props.todo.authorEmail +
     (props.todo.isWorkedOn ? " worked on by: " + props.todo.workedOnBy : "");
+
   return (
     <div
       className="border border-grey-400 p-4 rounded-md flex items-center justify-end"
