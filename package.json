@@ -6,7 +6,8 @@
   "scripts": {
     "start": "cross-env ts-node ./src/app.ts",
     "dev": "cross-env ts-node-dev --respawn ./src/app.ts",
-    "test": "cross-env NODE_ENV=test jest --verbose --runInBand"
+    "test": "cross-env NODE_ENV=test jest --verbose --runInBand",
+    "cypress:open": "cypress open"
   },
   "author": "",
   "license": "ISC",
@@ -22,6 +23,7 @@
     "@types/supertest": "^2.0.12",
     "babel-jest": "^28.1.2",
     "cross-env": "^7.0.3",
+    "cypress": "^10.6.0",
     "jest": "^28.1.2",
     "supertest": "^6.2.4",
     "ts-jest": "^28.0.5",
