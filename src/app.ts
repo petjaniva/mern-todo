@@ -245,15 +245,16 @@ app.put("/todo/:todoId", (req: Request, res: Response) => {
         title: "not authorized",
       });
     }
-    const updatedTodo = {
+    const updatedTodo: ITodo = {
       title: req.body.title,
       author: req.body.author,
+      authorEmail: req.body.authorEmail,
       isCompleted: req.body.isCompleted,
       _id: req.body._id,
       date: req.body.date,
       org: req.body.org,
       isWorkedOn: req.body.isWorkedOn,
-      WorkedOnBy: req.body.WorkedOnBy,
+      workedOnBy: req.body.workedOnBy,
     };
     jwt.verify(token, "secretkey", async (err: Error | null, decoded: any) => {
       if (err) {

@@ -17,7 +17,6 @@ interface ITodoProps {
 const SingleTodo: React.FC<ITodoProps> = (props: ITodoProps) => {
   const token = props.token;
   const date = new Date(props.todo.date);
-  const [user, setUser] = React.useState<IUser>(props.user);
   const dateOptions: Intl.DateTimeFormatOptions = {
     weekday: "long",
     year: "numeric",
@@ -26,19 +25,6 @@ const SingleTodo: React.FC<ITodoProps> = (props: ITodoProps) => {
     hour: "numeric",
     minute: "numeric",
   };
-
-  React.useEffect(() => {
-    console.log("user", props.user);
-    axios
-      .get(`/user`, { headers: { token: token } })
-      .then((res) => {
-        console.log("getuser res", res);
-        setUser(res.data.user);
-      })
-      .catch((err) => {
-        console.log("getuser err", err);
-      });
-  }, [token]);
 
   const onDoneClick = (clickedTodo: Todo) => {
     clickedTodo.isCompleted = !clickedTodo.isCompleted;
@@ -55,15 +41,13 @@ const SingleTodo: React.FC<ITodoProps> = (props: ITodoProps) => {
   const onWorkingOnClick = (todo: Todo) => {
     todo.isWorkedOn = !todo.isWorkedOn;
     if (todo.isWorkedOn) {
-      todo.workedOnBy = user.email;
+      todo.workedOnBy = props.user.email;
+      console.log(todo.workedOnBy);
     } else {
       todo.workedOnBy = null;
     }
-    console.log("working on", todo.workedOnBy);
     axios.put(`/todo/${todo._id}`, todo, { headers: { token: token } });
   };
-
-  //todo add isworkedonby
   const titleString =
     "date: " +
     date.toLocaleDateString("fi-FI", dateOptions) +

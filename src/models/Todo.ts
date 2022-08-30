@@ -23,7 +23,7 @@ export const todoSchema = new Schema<ITodo>({
   date: Date,
   org: { type: Schema.Types.ObjectId, ref: "Org", default: null },
   isWorkedOn: { type: Boolean, default: false },
-  workedOnBy: { type: Schema.Types.ObjectId, ref: "User", default: null },
+  workedOnBy: { type: String, default: null },
 });
 
 const Todo = model<ITodo>("Todo", todoSchema);
