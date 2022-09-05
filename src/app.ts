@@ -111,6 +111,27 @@ app.post("/org", (req: Request, res: Response) => {
   });
 });
 
+app.post("/reset", (req: Request, res: Response) => {
+  User.deleteMany({}, (err) => {
+    if (err) {
+      console.log(err);
+    }
+  });
+  Org.deleteMany({}, (err) => {
+    if (err) {
+      console.log(err);
+    }
+  });
+  Todo.deleteMany({}, (err) => {
+    if (err) {
+      console.log(err);
+    }
+  });
+  return res.status(200).json({
+    title: "database succesfully reset",
+  });
+});
+
 app.post("/login", (req: Request, res: Response) => {
   User.findOne({ email: req.body.email }, (err: Error, user: IUser) => {
     if (err)

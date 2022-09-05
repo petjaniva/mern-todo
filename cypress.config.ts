@@ -1,5 +1,8 @@
 import { defineConfig } from "cypress";
 import axios from "axios";
+import User from "./src/models/User";
+import Org from "./src/models/Org";
+import Todo from "./src/models/Todo";
 
 const url = "http://localhost:3000";
 export default defineConfig({
@@ -17,6 +20,11 @@ export default defineConfig({
             password: password,
             orgCode: orgCode,
           });
+          return null;
+        },
+        async prepareDB() {
+          await axios.post(url + "/reset");
+          return null;
         },
       });
     },
