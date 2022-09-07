@@ -87,10 +87,10 @@ const Dashboard = () => {
       <>
         <Navbar />
         <div className="max-w-md mx-auto pt-12">
+          <TodoForm todos={todoList} setTodos={setTodoList} user={user!} />
           <h1 className="font-bold text-green-400 text-center text-xl">
             my todos
           </h1>
-          <TodoForm todos={todoList} setTodos={setTodoList} user={user!} />
           <TodoList key="ownTodos" todos={todoList} user={user!} />
           <h1 className="font-bold text-green-400 text-center text-xl">
             org todos
