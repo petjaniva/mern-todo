@@ -2,7 +2,7 @@ describe("create a todo", () => {
   it("create a todo", () => {
     cy.visit("http://localhost:3000/");
     cy.contains("login").should("exist");
-    cy.get("input").eq(0).type("ruurico@ruurico.org");
+    cy.get("input").eq(0).type("ruurico@testorg.org");
     cy.get("input").eq(1).type("salasana");
     cy.get("button").click();
     cy.contains("my todos").should("exist");

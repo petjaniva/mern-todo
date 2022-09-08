@@ -11,6 +11,7 @@ import bcrypt from "bcrypt";
 import * as dotenv from "dotenv";
 import * as path from "path";
 import * as io from "socket.io";
+import Mongoose from "mongoose";
 
 interface IToken {
   _id: Types.ObjectId;
@@ -309,11 +310,15 @@ app.post("/todo", (req: Request, res: Response) => {
       return res.status(401).json({
         title: "not authorized",
       });
-    const user: IUser | null = await User.findById(decoded._id);
+    const user = await User.findById(decoded._id);
     if (!user) {
       return res.status(404).json({
         title: "user not found",
       });
+    }
+    let org;
+    if (req.body.org) {
+      org = await Org.findById(user.org);
     }
     let newTodo = new Todo({
       title: req.body.title,
@@ -321,20 +326,15 @@ app.post("/todo", (req: Request, res: Response) => {
       author: decoded._id,
       authorEmail: user.email,
       date: new Date(),
+      org: org ? org._id : null,
     });
-    const savedTodo: ITodo = await newTodo.save();
-
-    if (!req.body.org) {
-      user.todos.concat(savedTodo._id!);
+    const savedTodo = await newTodo.save();
+    if (!req.body.org || !org) {
+      user.todos.push(savedTodo._id!);
+      user.save();
     } else {
-      Org.findOne({ _id: decoded.org }, (err: Error, org: IOrg) => {
-        if (err) {
-          return res.status(404).json({
-            title: "org not found",
-          });
-        }
-        org.todos.concat(savedTodo._id!);
-      });
+      org.todos.push(savedTodo._id!);
+      org.save();
     }
     return res.status(200).json({
       title: "successfully added",

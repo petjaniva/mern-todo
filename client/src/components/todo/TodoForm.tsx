@@ -13,14 +13,18 @@ const TodoForm = ({ todos, setTodos, user }: TodoFormProps) => {
   const [title, setTitle] = React.useState("");
   const onSubmit = () => {
     const token = localStorage.getItem("token");
-    const orgTodo= document.getElementById("org") as HTMLInputElement;
+    const orgTodo = document.getElementById("org") as HTMLInputElement;
     if (title.length > 0 && token) {
       axios
-        .post("/todo", { title: title, org: orgTodo.checked }, { headers: { token: token } })
+        .post(
+          "/todo",
+          { title: title, org: orgTodo.checked },
+          { headers: { token: token } }
+        )
         .then((res) => {
           if (res.status === 200) {
-            let todo = res.data.todo;
-            setTodos([...todos, todo]);
+            //let todo = res.data.todo;
+            //setTodos([...todos, todo]);
             setTitle("");
           }
         });
