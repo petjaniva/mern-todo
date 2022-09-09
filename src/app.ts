@@ -1,7 +1,7 @@
 import User, { IUser, IUserDoc } from "./models/User";
 import { Request, Response } from "express";
 import Todo, { ITodo } from "./models/Todo";
-import Org, { IOrg } from "./models/Org";
+import Org, { IOrg, IOrgDoc } from "./models/Org";
 const { createServer } = require("http");
 import express from "express";
 import cors from "cors";
@@ -223,7 +223,12 @@ app.get("/todo", async (req: Request, res: Response) => {
       .exec()) as Populated<IUserDoc, "todos">;
     let todos = user.todos;
     let orgTodos: ITodo[] = [];
-
+    if (user.org) {
+      const org = (await Org.findById(user.org)
+        .populate("todos")
+        .exec()) as Populated<IOrgDoc, "todos">;
+      orgTodos = org.todos;
+    }
     return res.status(200).json({
       title: "success",
       todos: todos,

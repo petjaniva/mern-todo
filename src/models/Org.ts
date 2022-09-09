@@ -10,6 +10,8 @@ export interface IOrg {
   _id?: Types.ObjectId;
 }
 
+export interface IOrgDoc extends IOrg, Document<Types.ObjectId> {}
+
 const orgSchema = new Schema<IOrg>({
   name: {
     type: String,
