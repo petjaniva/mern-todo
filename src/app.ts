@@ -1,4 +1,4 @@
-import User, { IUser } from "./models/User";
+import User, { IUser, IUserDoc } from "./models/User";
 import { Request, Response } from "express";
 import Todo, { ITodo } from "./models/Todo";
 import Org, { IOrg } from "./models/Org";
@@ -201,7 +201,7 @@ app.get("/user/:id", (req: Request, res: Response) => {
   }
 });
 
-app.get("/todo", (req: Request, res: Response) => {
+app.get("/todo", async (req: Request, res: Response) => {
   let token = req.headers.token;
   if (Array.isArray(token)) token = token[0];
   if (!token) {
@@ -209,28 +209,25 @@ app.get("/todo", (req: Request, res: Response) => {
       title: "not authorized",
     });
   }
-  jwt.verify(token, "secretkey", (err: Error | null, decoded: any) => {
+  jwt.verify(token, "secretkey", async (err: Error | null, decoded: any) => {
     if (err)
       return res.status(401).json({
         title: "not authorized",
       });
+    type ID = Types.ObjectId;
+    type Populated<M, K extends keyof M> = Omit<M, K> & {
+      [P in K]: Exclude<M[P], ID[] | ID>;
+    };
+    const user = (await User.findById(decoded._id)
+      .populate("todos")
+      .exec()) as Populated<IUserDoc, "todos">;
+    let todos = user.todos;
     let orgTodos: ITodo[] = [];
 
-    Todo.find({ author: decoded._id }, (err: Error, todos: ITodo[]) => {
-      if (err) return console.log(err);
-      if (decoded.org) {
-        Org.findOne({ _id: decoded.org }, (err: Error, org: any) => {
-          if (org) {
-            orgTodos = org.todos;
-          }
-          if (err) return console.log(err);
-        });
-      }
-      return res.status(200).json({
-        title: "success",
-        todos: todos,
-        orgTodos: orgTodos,
-      });
+    return res.status(200).json({
+      title: "success",
+      todos: todos,
+      orgTodos: orgTodos,
     });
   });
 });
