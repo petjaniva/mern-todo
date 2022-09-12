@@ -50,6 +50,5 @@
     "react-router": "^6.3.0",
     "react-router-dom": "^6.3.0",
     "tailwindcss": "^1.9.6"
-  },
-  "proxy": "https://mern-todo-4b973.ew.r.appspot.com/"
+  }
 }

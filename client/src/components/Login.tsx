@@ -21,7 +21,7 @@ const Login = ({ renderSignup }: LoginProps) => {
 
   const onSubmit = () => {
     axios
-      .post("/login", {
+      .post(REACT_APP_API_BASE_URL + "/login", {
         email: email,
         password: password,
       })
