@@ -13,7 +13,7 @@ interface PostResponse {
 interface LoginData {
   token: string;
 }
-
+const api_url = "https://mern-todo-4b973.ew.r.appspot.com/";
 const Login = ({ renderSignup }: LoginProps) => {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
@@ -21,7 +21,7 @@ const Login = ({ renderSignup }: LoginProps) => {
 
   const onSubmit = () => {
     axios
-      .post(REACT_APP_API_BASE_URL + "/login", {
+      .post(api_url + "/login", {
         email: email,
         password: password,
       })
