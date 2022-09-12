@@ -8,6 +8,7 @@ interface TodoFormProps {
   setTodos: (todos: Todo[]) => void;
   user: IUser;
 }
+const api_url = "https://mern-todo-4b973.ew.r.appspot.com/";
 
 const TodoForm = ({ todos, setTodos, user }: TodoFormProps) => {
   const [title, setTitle] = React.useState("");
@@ -17,7 +18,7 @@ const TodoForm = ({ todos, setTodos, user }: TodoFormProps) => {
     if (title.length > 0 && token) {
       axios
         .post(
-          "/todo",
+          api_url + "/todo",
           { title: title, org: orgTodo.checked },
           { headers: { token: token } }
         )

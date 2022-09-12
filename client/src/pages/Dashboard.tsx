@@ -11,9 +11,10 @@ interface getTodosResponse {
   orgTodos: Todo[];
 }
 //const localToken = localStorage.getItem("token");
+const api_url = "https://mern-todo-4b973.ew.r.appspot.com/";
 
 const getTodos = (token: string): Promise<getTodosResponse> => {
-  const promise = axios.get("/todo", { headers: { token: token } });
+  const promise = axios.get(api_url + "/todo", { headers: { token: token } });
   const object = promise.then((response) => {
     return { todos: response.data.todos, orgTodos: response.data.orgTodos };
   });
@@ -65,7 +66,7 @@ const Dashboard = () => {
     if (localToken) {
       console.log("token found!");
       axios
-        .get("/user", { headers: { token: localToken } })
+        .get(api_url + "/user", { headers: { token: localToken } })
         .then((res) => {
           if (res.status === 200) {
             setUser(res.data.user);

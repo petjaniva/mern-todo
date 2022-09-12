@@ -5,6 +5,7 @@ interface orgProps {
   orgCode: string;
   setIsCreateOrg: (value: boolean) => void;
 }
+const api_url = "https://mern-todo-4b973.ew.r.appspot.com/";
 
 const CreateOrg = ({ orgCode, setIsCreateOrg }: orgProps) => {
   const [orgName, setOrgName] = React.useState("");
@@ -12,7 +13,7 @@ const CreateOrg = ({ orgCode, setIsCreateOrg }: orgProps) => {
   const onSubmit = async () => {
     if (orgName) {
       await axios
-        .post("/org", {
+        .post(api_url + "/org", {
           name: orgName,
           code: orgCode,
         })

@@ -6,6 +6,7 @@ interface SigninProps {
   renderLogin: () => void;
 }
 
+const api_url = "https://mern-todo-4b973.ew.r.appspot.com/";
 const Signup = ({ renderLogin }: SigninProps) => {
   const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
@@ -16,7 +17,7 @@ const Signup = ({ renderLogin }: SigninProps) => {
 
   const onSubmit = async () => {
     if (password.length >= 6) {
-      await axios.post("/signup", {
+      await axios.post(api_url + "/signup", {
         email: username,
         password: password,
         orgCode: orgCode,

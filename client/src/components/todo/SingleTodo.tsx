@@ -14,6 +14,8 @@ interface ITodoProps {
   user: IUser;
 }
 
+const api_url = "https://mern-todo-4b973.ew.r.appspot.com/";
+
 const SingleTodo: React.FC<ITodoProps> = (props: ITodoProps) => {
   const token = props.token;
   const date = new Date(props.todo.date);
@@ -29,12 +31,14 @@ const SingleTodo: React.FC<ITodoProps> = (props: ITodoProps) => {
   const onDoneClick = (clickedTodo: Todo) => {
     clickedTodo.isCompleted = !clickedTodo.isCompleted;
     //setTodo(clickedTodo);
-    axios.put(`/todo/${clickedTodo._id}`, clickedTodo, {
+    axios.put(api_url + `/todo/${clickedTodo._id}`, clickedTodo, {
       headers: { token: token },
     });
   };
   const onDeleteClick = (clickedTodo: Todo) => {
-    axios.delete(`/todo/${clickedTodo._id}`, { headers: { token: token } });
+    axios.delete(api_url + `/todo/${clickedTodo._id}`, {
+      headers: { token: token },
+    });
     //props.setTodos(props.todos.filter((todo) => todo._id !== clickedTodo._id));
   };
   //function to update the todo when user starts working on it
@@ -46,7 +50,9 @@ const SingleTodo: React.FC<ITodoProps> = (props: ITodoProps) => {
     } else {
       todo.workedOnBy = null;
     }
-    axios.put(`/todo/${todo._id}`, todo, { headers: { token: token } });
+    axios.put(api_url + `/todo/${todo._id}`, todo, {
+      headers: { token: token },
+    });
   };
   const titleString =
     "date: " +
