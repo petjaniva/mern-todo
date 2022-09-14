@@ -29,7 +29,7 @@ const Dashboard = () => {
   const [socket, setSocket] = React.useState<Socket | null>(null);
 
   React.useEffect(() => {
-    setSocket(io());
+    setSocket(io("https://mern-todo-4b973.ew.r.appspot.com/"));
     if (localToken) {
       getTodos(localToken)
         .then((response) => {
