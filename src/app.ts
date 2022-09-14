@@ -36,8 +36,7 @@ const httpServer = createServer(app);
 
 const ioServer = new io.Server(httpServer, {
   cors: {
-    origin: "https://jovial-kelpie-6feae0.netlify.app/",
-    methods: ["GET", "POST"],
+    origin: "*",
   },
 });
 
