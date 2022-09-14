@@ -34,7 +34,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 const httpServer = createServer(app);
 
-const ioServer = new io.Server(httpServer);
+const ioServer = new io.Server(httpServer, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"],
+  },
+});
 
 ioServer.on("connection", (socket) => {
   console.log("a user connected");
