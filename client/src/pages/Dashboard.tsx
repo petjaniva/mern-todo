@@ -79,27 +79,20 @@ const Dashboard = () => {
   }, [localToken]);
 
   return (
-    <React.Profiler
-      id="test1"
-      onRender={(...args) => {
-        //console.log(args);
-      }}
-    >
-      <>
-        <Navbar />
-        <div className="max-w-md mx-auto pt-12">
-          <TodoForm todos={todoList} setTodos={setTodoList} user={user!} />
-          <h1 className="font-bold text-green-400 text-center text-xl">
-            my todos
-          </h1>
-          <TodoList key="ownTodos" todos={todoList} user={user!} />
-          <h1 className="font-bold text-green-400 text-center text-xl">
-            org todos
-          </h1>
-          <TodoList key="orgTodos" todos={orgTodoList} user={user!} />
-        </div>
-      </>
-    </React.Profiler>
+    <>
+      <Navbar />
+      <div className="max-w-md mx-auto pt-12">
+        <TodoForm todos={todoList} setTodos={setTodoList} user={user!} />
+        <h1 className="font-bold text-green-400 text-center text-xl">
+          my todos
+        </h1>
+        <TodoList key="ownTodos" todos={todoList} user={user!} />
+        <h1 className="font-bold text-green-400 text-center text-xl">
+          org todos
+        </h1>
+        <TodoList key="orgTodos" todos={orgTodoList} user={user!} />
+      </div>
+    </>
   );
 };
 
