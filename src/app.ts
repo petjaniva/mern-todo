@@ -2,7 +2,7 @@ import User, { IUser, IUserDoc } from "./models/User";
 import { Request, Response } from "express";
 import Todo, { ITodo } from "./models/Todo";
 import Org, { IOrg, IOrgDoc } from "./models/Org";
-const { createServer } = require("https");
+const { createServer } = require("http");
 import express from "express";
 import cors from "cors";
 import jwt from "jsonwebtoken";
