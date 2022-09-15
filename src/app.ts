@@ -36,7 +36,7 @@ const httpServer = createServer(app);
 
 const ioServer = new io.Server(httpServer, {
   cors: {
-    origin: "*",
+    origin: ["*"],
   },
   transports: ["websocket", "polling"],
 });
