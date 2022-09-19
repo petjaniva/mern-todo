@@ -36,10 +36,9 @@ const httpServer = createServer(app);
 
 const ioServer = new io.Server(httpServer, {
   cors: {
-    origin: ["*"],
+    origin: ["https://jovial-kelpie-6feae0.netlify.app/:8885"],
     credentials: true,
   },
-  transports: ["websocket", "polling"],
 });
 
 ioServer.on("connection", (socket) => {
