@@ -9,23 +9,23 @@ import Todo, { ITodo } from "../models/Todo";
 
 const router = Router();
 
-router.post("/org", (req: Request, res: Response) => {
-  const newOrg = new Org({
-    name: req.body.name,
-    code: req.body.code,
-    members: [],
-    todos: [],
-  });
-  newOrg.save((err) => {
+router.post("/reset", (req: Request, res: Response) => {
+  User.deleteMany({}, (err) => {
     if (err) {
       console.log(err);
-      return res.status(400).json({
-        title: "error",
-        error: err,
-      });
     }
-    return res.status(200).json({
-      title: "organization succesfully added",
-    });
+  });
+  Org.deleteMany({}, (err) => {
+    if (err) {
+      console.log(err);
+    }
+  });
+  Todo.deleteMany({}, (err) => {
+    if (err) {
+      console.log(err);
+    }
+  });
+  return res.status(200).json({
+    title: "database succesfully reset",
   });
 });
