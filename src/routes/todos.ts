@@ -9,7 +9,7 @@ import Todo, { ITodo } from "../models/Todo";
 
 const router = Router();
 
-router.get("/todo", async (req: Request, res: Response) => {
+router.get("/", async (req: Request, res: Response) => {
   let token = req.headers.token;
   if (Array.isArray(token)) token = token[0];
   if (!token) {
@@ -45,7 +45,7 @@ router.get("/todo", async (req: Request, res: Response) => {
   });
 });
 
-router.delete("/todo/:id", (req: Request, res: Response) => {
+router.delete("/:id", (req: Request, res: Response) => {
   let token = req.headers.token;
   if (Array.isArray(token)) token = token[0];
   if (!token) {
@@ -67,7 +67,7 @@ router.delete("/todo/:id", (req: Request, res: Response) => {
   });
 });
 
-router.put("/todo/:todoId", (req: Request, res: Response) => {
+router.put("/:todoId", (req: Request, res: Response) => {
   try {
     let token = req.headers.token;
     if (Array.isArray(token)) token = token[0];
@@ -106,7 +106,7 @@ router.put("/todo/:todoId", (req: Request, res: Response) => {
   }
 });
 
-router.post("/todo", (req: Request, res: Response) => {
+router.post("/", (req: Request, res: Response) => {
   let token = req.headers.token;
   if (Array.isArray(token)) token = token[0];
   if (!token) {

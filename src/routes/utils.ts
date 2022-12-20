@@ -9,7 +9,8 @@ import Todo, { ITodo } from "../models/Todo";
 
 const router = Router();
 
-router.post("/reset", (req: Request, res: Response) => {
+router.post("/", (req: Request, res: Response) => {
+  console.log("resetting database.");
   User.deleteMany({}, (err) => {
     if (err) {
       console.log(err);

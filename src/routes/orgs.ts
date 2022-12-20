@@ -9,7 +9,7 @@ import Todo, { ITodo } from "../models/Todo";
 
 const router = Router();
 
-router.post("/org", (req: Request, res: Response) => {
+router.post("/", (req: Request, res: Response) => {
   const newOrg = new Org({
     name: req.body.name,
     code: req.body.code,

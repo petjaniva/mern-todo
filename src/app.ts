@@ -13,6 +13,7 @@ import orgRouter from "./routes/orgs";
 import todoRouter from "./routes/todos";
 import utilsRouter from "./routes/utils";
 import loginRouter from "./routes/login";
+import signupRouter from "./routes/signup";
 
 const app = express();
 dotenv.config({ path: path.resolve(__dirname, "../.env") });
@@ -59,7 +60,7 @@ httpServer.listen(port, (err?: Error) => {
 
 app.use("/user", userRouter);
 app.use("/login", loginRouter);
-app.use("/signup", userRouter);
+app.use("/signup", signupRouter);
 app.use("/org", orgRouter);
 app.use("/todo", todoRouter);
 app.use("/reset", utilsRouter);
