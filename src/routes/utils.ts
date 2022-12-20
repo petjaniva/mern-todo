@@ -29,3 +29,5 @@ router.post("/reset", (req: Request, res: Response) => {
     title: "database succesfully reset",
   });
 });
+
+export default router;

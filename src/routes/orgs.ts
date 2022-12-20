@@ -29,3 +29,5 @@ router.post("/org", (req: Request, res: Response) => {
     });
   });
 });
+
+export default router;

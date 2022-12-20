@@ -73,35 +73,6 @@ router.post("/login", (req: Request, res: Response) => {
   });
 });
 
-router.post("/login", (req: Request, res: Response) => {
-  User.findOne({ email: req.body.email }, (err: Error, user: IUser) => {
-    if (err)
-      return res.status(500).json({
-        title: "server error",
-        error: err.message,
-      });
-    if (!user) {
-      return res.status(400).json({
-        title: "user is not found",
-        error: "invalid email or password",
-      });
-    }
-    if (!bcrypt.compareSync(req.body.password, user.password)) {
-      return res.status(401).json({
-        title: "login failed",
-        error: "invalid email or password",
-      });
-    }
-    let token = jwt.sign({ _id: user._id, org: user.org }, "secretkey");
-    return res.status(200).json({
-      title: "login succesful",
-      token: token,
-      user: user,
-      todos: user.todos,
-    });
-  });
-});
-
 router.get("/user", (req: Request, res: Response) => {
   let token = req.headers.token;
   if (typeof token === "string") {
@@ -139,3 +110,5 @@ router.get("/user/:id", (req: Request, res: Response) => {
     });
   }
 });
+
+export default router;
